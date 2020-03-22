@@ -61,7 +61,7 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public boolean isInspercor(){
+    public boolean isInspector(){
         return roles.contains(Role.INSPECTOR);
     }
 

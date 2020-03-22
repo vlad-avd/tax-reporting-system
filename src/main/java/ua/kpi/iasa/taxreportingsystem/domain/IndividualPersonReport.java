@@ -13,6 +13,18 @@ public class IndividualPersonReport extends Report {
     private String workplace;
     private double salary;
 
+    public IndividualPersonReport(){
+
+    }
+
+    public IndividualPersonReport( String name, String surname, String patronymic, String workplace, double salary ){
+        this.name = name;
+        this.surname = surname;
+        this.patronymic = patronymic;
+        this.workplace = workplace;
+        this.salary = salary;
+    }
+
     public String getName() {
         return name;
     }
