@@ -1,28 +1,22 @@
 <#macro login path isRegisterForm>
+    <#import "/spring.ftl" as spring>
     <form action="${path}" method="post">
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label"> User Name : </label>
+            <label class="col-sm-2 col-form-label"><@spring.message "messages.user.username"/>: </label>
             <div class="col-sm-6">
-                <input type="text" name="username" class="form-control" placeholder="User name"/>
+                <input type="text" name="username" class="form-control" placeholder=<@spring.message "messages.user.username"/>/>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label"> Password: </label>
+            <label class="col-sm-2 col-form-label"> <@spring.message "messages.user.password"/>: </label>
             <div class="col-sm-6">
-                <input type="password" name="password" class="form-control" placeholder="Password"/>
+                <input type="password" name="password" class="form-control" placeholder=<@spring.message "messages.user.password"/>/>
             </div>
         </div>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <#if !isRegisterForm>
-            <a href="/registration">Add new user</a>
+            <a href="/registration"><@spring.message "messages.account.add"/></a>
         </#if>
-        <button class="btn btn-primary" type="submit"><#if isRegisterForm>Create <#else>Sign in</#if></button>
-    </form>
-</#macro>
-
-<#macro logout>
-    <form action="/logout" method="post">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <button class="btn btn-primary" type="submit">Sign out</button>
+        <button class="btn btn-primary" type="submit"><#if isRegisterForm><@spring.message "messages.account.create"/> <#else><@spring.message "messages.account.sign.in"/></#if></button>
     </form>
 </#macro>

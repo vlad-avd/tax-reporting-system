@@ -1,4 +1,5 @@
 <#import "parts/common.ftlh" as c>
+<#import "/spring.ftl" as spring/>
 <@c.page>
 User editor
 <div class="container mt-5">
@@ -11,7 +12,7 @@ User editor
         </#list>
         <input type="hidden" value="${user.id}" name="userId">
         <input type="hidden" value="${_csrf.token}" name="_csrf">
-        <button type="submit">Save</button>
+        <button type="submit"><@spring.message "messages.user.save"/></button>
     </form>
 </div>
 </@c.page>

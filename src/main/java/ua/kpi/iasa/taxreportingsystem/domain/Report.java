@@ -1,10 +1,14 @@
 package ua.kpi.iasa.taxreportingsystem.domain;
 
+import lombok.Data;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
 import javax.persistence.*;
 
+@Data
 @MappedSuperclass
 public abstract class Report {
     @Id
@@ -17,6 +21,12 @@ public abstract class Report {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus;
 
+    @Enumerated(EnumType.STRING)
+    private RejectionReason rejectionReason;
+
+    @Enumerated(EnumType.STRING)
+    private Edits edits;
+
     private int period;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -26,53 +36,4 @@ public abstract class Report {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="inspector_id")
     private User inspector;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public PersonType getPersonType() {
-        return personType;
-    }
-
-    public void setPersonType(PersonType personType) {
-        this.personType = personType;
-    }
-
-    public int getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(int period) {
-        this.period = period;
-    }
-
-
-    public ReportStatus getReportStatus() {
-        return reportStatus;
-    }
-
-    public void setReportStatus(ReportStatus reportStatus) {
-        this.reportStatus = reportStatus;
-    }
-
-    public User getTaxpayer() {
-        return taxpayer;
-    }
-
-    public void setTaxpayer(User taxpayer) {
-        this.taxpayer = taxpayer;
-    }
-
-    public User getInspector() {
-        return inspector;
-    }
-
-    public void setInspector(User inspector) {
-        this.inspector = inspector;
-    }
 }

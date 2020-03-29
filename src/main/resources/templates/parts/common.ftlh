@@ -1,10 +1,11 @@
 <#macro page>
+    <#import "/spring.ftl" as spring/>
 <#-- @ftlvariable name="_csrf" type="org.springframework.security.web.csrf.CsrfToken" -->
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" >
     <head>
         <meta charset="UTF-8">
-        <title>Spring Security Example </title>
+        <title><@spring.message "messages.project.title"/></title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Bootstrap CSS -->

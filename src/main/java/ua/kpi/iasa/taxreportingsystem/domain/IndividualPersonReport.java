@@ -1,9 +1,17 @@
 package ua.kpi.iasa.taxreportingsystem.domain;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 
 import javax.persistence.*;
+import java.util.Set;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="individual_person_report")
 public class IndividualPersonReport extends Report {
@@ -13,10 +21,6 @@ public class IndividualPersonReport extends Report {
     private String workplace;
     private double salary;
 
-    public IndividualPersonReport(){
-
-    }
-
     public IndividualPersonReport( String name, String surname, String patronymic, String workplace, double salary ){
         this.name = name;
         this.surname = surname;
@@ -24,45 +28,4 @@ public class IndividualPersonReport extends Report {
         this.workplace = workplace;
         this.salary = salary;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public String getWorkplace() {
-        return workplace;
-    }
-
-    public void setWorkplace(String workplace) {
-        this.workplace = workplace;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
 }

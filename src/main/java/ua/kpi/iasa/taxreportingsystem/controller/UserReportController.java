@@ -12,11 +12,10 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.repos.IndividualPersonReportRepo;
 
 @Controller
-public class ReportController {
-    @Autowired
-    private IndividualPersonReportRepo reportRepo;
+public class UserReportController {
 
-    @Autowired IndividualPersonReportRepo individualPersonReportRepo;
+    @Autowired
+    private IndividualPersonReportRepo individualPersonReportRepo;
 
     @GetMapping("/report")
     public String reportList(@AuthenticationPrincipal User user, Model model){
@@ -43,25 +42,10 @@ public class ReportController {
         report.setPersonType(PersonType.INDIVIDUAL_PERSON);
         report.setTaxpayer(user);
         report.setReportStatus(ReportStatus.ON_VERIFYING);
-        reportRepo.save(report);
+        individualPersonReportRepo.save(report);
 
         model.addAttribute("reports", individualPersonReportRepo.findByTaxpayerId(user.getId()));
 
         return "reportList";
-    }
-
-    @GetMapping("/verification-reports")
-    public String unverifiedReports(@AuthenticationPrincipal User user, Model model){
-        Iterable<IndividualPersonReport> reports = individualPersonReportRepo.findByReportStatus(ReportStatus.ON_VERIFYING);
-        model.addAttribute("reports", reports);
-
-        return "verificationReportList";
-    }
-
-    @GetMapping("/verification-report/{reportId}")
-    public String checkReport(@PathVariable("reportId") IndividualPersonReport report, Model model){
-        model.addAttribute("report", report);
-
-        return "checkReport";
     }
 }

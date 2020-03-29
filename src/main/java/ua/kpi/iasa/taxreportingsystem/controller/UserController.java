@@ -59,4 +59,10 @@ public class UserController {
         return "redirect:/user";
     }
 
+    @GetMapping("replace-inspector")
+    public String replaceInspector(Model model){
+        model.addAttribute("message", "Request for a replacement inspector has been sent");
+        return "message";
+    }
+
 }

@@ -1,11 +1,12 @@
 <#import "parts/common.ftlh" as c>
+<#import "/spring.ftl" as spring/>
 <@c.page>
 <table>
     <thead>
     <tr>
-        <th>Period</th>
-        <th>Id</th>
-        <th>Report status</th>
+        <th><@spring.message "messages.report.period"/></th>
+        <th><@spring.message "messages.report.id"/></th>
+        <th><@spring.message "messages.report.status"/></th>
     </tr>
     </thead>
     <tbody>
@@ -14,19 +15,19 @@
             <td>${report.period}</td>
             <td>${report.id}</td>
             <td>${report.reportStatus}</td>
-            <td><a href="/report/${report.id}">Open</a></td>
+            <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>
         </tr>
     </#list>
     </tbody>
 </table>
 <div class="form-group mt-3">
     <form action="/individual-person-report">
-        <button class="btn btn-primary" type="submit">Create individual person report</button>
+        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.createIndividualPersonReport"/></button>
     </form>
 </div>
 <div class="form-group">
     <form action="/legal-entity-report">
-        <button class="btn btn-primary" type="submit">Create legal entity report</button>
+        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.legal.entity.report"/></button>
     </form>
 </div>
 </@c.page>
