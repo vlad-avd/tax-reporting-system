@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportDTO {
+public abstract class ReportDTO {
     private Long id;
 
     private PersonType personType;
@@ -37,31 +36,31 @@ public class ReportDTO {
 
     private User replacedInspector;
 
-    //IndividualPersonReport
-    private String name;
-    private String surname;
-    private String patronymic;
-    private String workplace;
-    private double salary;
+//    //IndividualPersonReport
+//    private String name;
+//    private String surname;
+//    private String patronymic;
+//    private String workplace;
+//    private double salary;
 
-    //LegalEntityReport
-    private String companyName;
-    private int financialTurnover;
-    private int employeesNumber;
+//    //LegalEntityReport
+//    private String companyName;
+//    private int financialTurnover;
+//    private int employeesNumber;
+//
+//    private List<User> replacedInspectors = new ArrayList<>();
+//
+//    public ReportDTO(String companyName, int financialTurnover, int employeesNumber){
+//        this.companyName = companyName;
+//        this.financialTurnover = financialTurnover;
+//        this.employeesNumber = employeesNumber;
+//    }
 
-    private List<User> replacedInspectors = new ArrayList<>();
-
-    public ReportDTO(String companyName, int financialTurnover, int employeesNumber){
-        this.companyName = companyName;
-        this.financialTurnover = financialTurnover;
-        this.employeesNumber = employeesNumber;
-    }
-
-    public ReportDTO(String name, String surname, String patronymic, String workplace, double salary ){
-        this.name = name;
-        this.surname = surname;
-        this.patronymic = patronymic;
-        this.workplace = workplace;
-        this.salary = salary;
-    }
+//    public ReportDTO(String name, String surname, String patronymic, String workplace, double salary ){
+//        this.name = name;
+//        this.surname = surname;
+//        this.patronymic = patronymic;
+//        this.workplace = workplace;
+//        this.salary = salary;
+//    }
 }

@@ -6,6 +6,8 @@ import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
+import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
+import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
 import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
 
@@ -28,7 +30,7 @@ public class ReportService {
         reportRepo.save(report);
     }
 
-    public Report createIndividualPersonReport(ReportDTO reportDTO){
+    public Report createIndividualPersonReport(IndividualPersonReportDTO reportDTO){
         return reportRepo.save(Report.builder()
                         .name(reportDTO.getName())
                         .surname(reportDTO.getSurname())
@@ -42,7 +44,7 @@ public class ReportService {
                         .build());
     }
 
-    public Report createLegalEntityReport(ReportDTO reportDTO){
+    public Report createLegalEntityReport(LegalEntityReportDTO reportDTO){
         return reportRepo.save(Report.builder()
                         .companyName(reportDTO.getCompanyName())
                         .employeesNumber(reportDTO.getEmployeesNumber())

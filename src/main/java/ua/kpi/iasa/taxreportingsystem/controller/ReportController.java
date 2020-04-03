@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
+import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
@@ -32,7 +33,7 @@ public class ReportController {
 
     @PostMapping("/report/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
-                                         ReportDTO reportDTO, Model model){
+                                         IndividualPersonReportDTO reportDTO, Model model){
         reportDTO.setPeriod(1);
         reportDTO.setTaxpayer(user);
         reportService.createIndividualPersonReport(reportDTO);
