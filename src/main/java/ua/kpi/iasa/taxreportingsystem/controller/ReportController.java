@@ -5,29 +5,33 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.kpi.iasa.taxreportingsystem.domain.IndividualPersonReport;
+import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
-import ua.kpi.iasa.taxreportingsystem.repos.IndividualPersonReportRepo;
+import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
+import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 
 @Controller
-public class UserReportController {
+public class IndividualPersonReportController {
 
     @Autowired
-    private IndividualPersonReportRepo individualPersonReportRepo;
+    private ReportRepo reportRepo;
+
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping("/report")
     public String reportList(@AuthenticationPrincipal User user, Model model){
-        model.addAttribute("reports", individualPersonReportRepo.findByTaxpayerId(user.getId()));
+        model.addAttribute("reports", reportRepo.findByTaxpayerId(user.getId()));
 
-        return "reportList";
+        return "report-list";
     }
 
     @GetMapping("/report/{report}")
-    public String openReport(@PathVariable IndividualPersonReport report, Model model){
+    public String openReport(@PathVariable Report report, Model model){
         model.addAttribute("report", report);
-        return "individualPersonReport";
+        return "individual-person-report";
     }
 
     @PostMapping("/report/individual-person-report")
@@ -37,15 +41,15 @@ public class UserReportController {
                                          @RequestParam String patronymic,
                                          @RequestParam String workplace,
                                          @RequestParam Double salary, Model model){
-        IndividualPersonReport report = new IndividualPersonReport(name, surname, patronymic, workplace, salary);
+        Report report = new Report(name, surname, patronymic, workplace, salary);
         report.setPeriod(1);
         report.setPersonType(PersonType.INDIVIDUAL_PERSON);
         report.setTaxpayer(user);
         report.setReportStatus(ReportStatus.ON_VERIFYING);
-        individualPersonReportRepo.save(report);
+        reportRepo.save(report);
 
-        model.addAttribute("reports", individualPersonReportRepo.findByTaxpayerId(user.getId()));
+        model.addAttribute("reports", reportRepo.findByTaxpayerId(user.getId()));
 
-        return "reportList";
+        return "report-list";
     }
 }
