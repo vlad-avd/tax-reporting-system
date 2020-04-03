@@ -39,9 +39,9 @@ public class ReportService {
                         .salary(reportDTO.getSalary())
                         .personType(PersonType.INDIVIDUAL_PERSON)
                         .reportStatus(ReportStatus.ON_VERIFYING)
-                        .taxpayer(reportDTO.getTaxpayer())
                         .taxPeriodFrom(reportDTO.getTaxPeriodFrom())
                         .taxPeriodTo(reportDTO.getTaxPeriodTo())
+                        .taxpayer(reportDTO.getTaxpayer())
                         .build());
     }
 
@@ -50,8 +50,10 @@ public class ReportService {
                         .companyName(reportDTO.getCompanyName())
                         .employeesNumber(reportDTO.getEmployeesNumber())
                         .financialTurnover(reportDTO.getFinancialTurnover())
-                        .personType(PersonType.INDIVIDUAL_PERSON)
+                        .personType(PersonType.LEGAL_ENTITY)
                         .reportStatus(ReportStatus.ON_VERIFYING)
+                        .taxPeriodFrom(reportDTO.getTaxPeriodFrom())
+                        .taxPeriodTo(reportDTO.getTaxPeriodTo())
                         .taxpayer(reportDTO.getTaxpayer())
                         .build());
         }

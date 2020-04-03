@@ -2,6 +2,7 @@
 <#import "/spring.ftl" as spring/>
 <@c.page>
 <div>
+<#if report.personType == "INDIVIDUAL_PERSON">
     <div class="border-bottom mb-2 col-md-4">
         <span class="h6"><@spring.message "messages.individual.person.report.first.name"/>:</span>
         <span>${report.name}</span>
@@ -22,6 +23,20 @@
         <span class="h6 mb-1"><@spring.message "messages.individual.person.report.salary"/>:</span>
         <span>${report.salary}</span>
     </div>
+<#else>
+    <div class="border-bottom mb-2 col-md-4">
+        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.company.name"/>:</span>
+        <span>${report.companyName}</span>
+    </div>
+    <div class="border-bottom mb-2 col-md-4">
+        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.employees.number"/>:</span>
+        <span>${report.employeesNumber}</span>
+    </div>
+    <div class="border-bottom mb-2 col-md-4">
+        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.financial.turnover"/>:</span>
+        <span>${report.financialTurnover}</span>
+    </div>
+    </#if>
     <div class="border-bottom mb-2 col-md-4">
         <span class="h6 mb-1"><@spring.message "messages.report.taxPeriodFrom"/>:</span>
         <span>${report.taxPeriodFrom}</span>

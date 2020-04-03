@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
+import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
@@ -47,6 +48,24 @@ public class ReportController {
         reportDTO.setTaxPeriodTo(taxPeriodTo);
         reportDTO.setTaxpayer(user);
         reportService.createIndividualPersonReport(reportDTO);
+
+        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
+
+        return "report-list";
+    }
+
+    @PostMapping("/report/legal-entity-report")
+    public String legalEntityReport(@AuthenticationPrincipal User user,
+                                    LegalEntityReportDTO reportDTO,
+                                    @RequestParam("taxPeriodFrom")
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodFrom,
+                                    @RequestParam("taxPeriodTo")
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodTo, Model model){
+
+        reportDTO.setTaxPeriodFrom(taxPeriodFrom);
+        reportDTO.setTaxPeriodTo(taxPeriodTo);
+        reportDTO.setTaxpayer(user);
+        reportService.createLegalEntityReport(reportDTO);
 
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
 

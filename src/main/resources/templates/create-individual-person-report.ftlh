@@ -21,13 +21,13 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.workplace"/> : </label>
+        <label class="col-sm-2 col-form-label"> <@spring.message "messages.report.taxPeriodFrom"/> : </label>
         <div class="col-sm-6">
             <input type="text" name="taxPeriodFrom" class="form-control" placeholder=<@spring.message "messages.report.taxPeriodFrom"/>>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.workplace"/> : </label>
+        <label class="col-sm-2 col-form-label"> <@spring.message "messages.report.taxPeriodFrom"/> : </label>
         <div class="col-sm-6">
             <input type="text" name="taxPeriodTo" class="form-control" placeholder=<@spring.message "messages.report.taxPeriodTo"/>>
         </div>
