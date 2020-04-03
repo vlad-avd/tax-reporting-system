@@ -8,5 +8,5 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import java.util.List;
 
 public interface UserRepo extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+    public User findByUsername(String username);
 }

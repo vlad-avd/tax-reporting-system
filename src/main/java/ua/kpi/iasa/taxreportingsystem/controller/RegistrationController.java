@@ -7,14 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
+import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
+import ua.kpi.iasa.taxreportingsystem.service.UserService;
 
 import java.util.Collections;
 
 @Controller
 public class RegistrationController {
     @Autowired
-    private UserRepo userRepo;
+    private UserService userService;
 
     @GetMapping("/registration")
     public String registratin(){
@@ -22,18 +24,14 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(User user, Model model){
-        User userFromDb = userRepo.findByUsername(user.getUsername());
+    public String addUser(UserDTO userDTO, Model model){
+        User userFromDb = userService.findByUsername(userDTO.getUsername());
 
         if(userFromDb != null){
             model.addAttribute("message", "User exists!");
             return "registration";
         }
-
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-
-        userRepo.save(user);
+        userService.createUser(userDTO);
 
         return "redirect:/login";
     }

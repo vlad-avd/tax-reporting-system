@@ -2,21 +2,54 @@ package ua.kpi.iasa.taxreportingsystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.kpi.iasa.taxreportingsystem.domain.IndividualPersonReport;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
-import ua.kpi.iasa.taxreportingsystem.repos.IndividualPersonReportRepo;
+import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
+import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class IndividualPersonReportService {
+public class ReportService {
     @Autowired
-    private IndividualPersonReportRepo individualPersonReportRepo;
+    private ReportRepo reportRepo;
 
-    public List<IndividualPersonReport> get(ReportStatus reportStatus, User user){
-        return individualPersonReportRepo.findByReportStatusAndReplacedInspectorIsNullOrReplacedInspectorNot(reportStatus, user);
+    public List<Report> get(User user){
+        return reportRepo.getVerificationReports(user);
     }
+
+    public List<Report> getUserSubmittedReports(Long id){
+        return reportRepo.findByTaxpayerId(id);
+    }
+
+    public void saveReport(Report report){
+        reportRepo.save(report);
+    }
+
+    public Report createIndividualPersonReport(ReportDTO reportDTO){
+        return reportRepo.save(Report.builder()
+                        .name(reportDTO.getName())
+                        .surname(reportDTO.getSurname())
+                        .patronymic(reportDTO.getPatronymic())
+                        .workplace(reportDTO.getWorkplace())
+                        .salary(reportDTO.getSalary())
+                        .personType(PersonType.INDIVIDUAL_PERSON)
+                        .reportStatus(ReportStatus.ON_VERIFYING)
+                        .taxpayer(reportDTO.getTaxpayer())
+                        .period(reportDTO.getPeriod())
+                        .build());
+    }
+
+    public Report createLegalEntityReport(ReportDTO reportDTO){
+        return reportRepo.save(Report.builder()
+                        .companyName(reportDTO.getCompanyName())
+                        .employeesNumber(reportDTO.getEmployeesNumber())
+                        .financialTurnover(reportDTO.getFinancialTurnover())
+                        .personType(PersonType.INDIVIDUAL_PERSON)
+                        .reportStatus(ReportStatus.ON_VERIFYING)
+                        .taxpayer(reportDTO.getTaxpayer())
+                        .build());
+        }
 }

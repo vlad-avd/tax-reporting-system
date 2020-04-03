@@ -1,4 +1,4 @@
-<#import "parts/common.ftlh" as c>
+<#import "parts/template.ftlh" as c>
 <@c.page>
     <div>
         ${message}

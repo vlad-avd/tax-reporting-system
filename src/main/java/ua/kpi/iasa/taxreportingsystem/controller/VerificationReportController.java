@@ -1,6 +1,7 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,42 +9,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ua.kpi.iasa.taxreportingsystem.domain.IndividualPersonReport;
+import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
-import ua.kpi.iasa.taxreportingsystem.repos.IndividualPersonReportRepo;
+import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
+import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 
-import java.util.Map;
-
+@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_INSPECTOR')")
 @Controller
-public class InspectorReportController {
+public class VerificationReportController {
 
     @Autowired
-    private IndividualPersonReportRepo individualPersonReportRepo;
+    private ReportService reportService;
 
     @GetMapping("/verification-reports")
     public String unverifiedReports(@AuthenticationPrincipal User user, Model model){
-        Iterable<IndividualPersonReport> reports = individualPersonReportRepo.findByReportStatus(ReportStatus.ON_VERIFYING);
+        Iterable<Report> reports = reportService.get(user);
         model.addAttribute("reports", reports);
 
-        return "reportListForInspector";
+        return "verification-report-list";
     }
 
     @GetMapping("/verification-report/{reportId}")
-    public String openReportAsInspector(@PathVariable("reportId") IndividualPersonReport report, Model model){
+    public String openReportAsInspector(@PathVariable("reportId") Report report, Model model){
         model.addAttribute("report", report);
         model.addAttribute("edits", Edits.values());
         model.addAttribute("rejectionReasons", RejectionReason.values());
 
-        return "checkReport";
+        return "report-validation";
     }
 
     @PostMapping("/check-report/{reportId}")
-    public String checkReport(@PathVariable("reportId") IndividualPersonReport report,
+    public String checkReport(@PathVariable("reportId") Report report,
                               @AuthenticationPrincipal User user,
-                              @RequestParam String message,
+                              @RequestParam(required = false) String message,
                               @RequestParam String reportStatus, Model model){
 
         if( reportStatus.equals("approve") ){
@@ -58,8 +59,8 @@ public class InspectorReportController {
             report.setEdits(Edits.valueOf(message));
         }
         report.setInspector(user);
-        individualPersonReportRepo.save(report);
-        model.addAttribute("reports", individualPersonReportRepo.findByReportStatus(ReportStatus.ON_VERIFYING));
+        reportService.saveReport(report);
+        model.addAttribute("reports", reportService.get(user));
 
         return "redirect:/verification-reports";
     }

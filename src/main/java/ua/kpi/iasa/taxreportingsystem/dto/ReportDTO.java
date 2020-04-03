@@ -1,9 +1,10 @@
-package ua.kpi.iasa.taxreportingsystem.domain;
+package ua.kpi.iasa.taxreportingsystem.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
@@ -14,37 +15,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@Entity
-@Table(name="report")
-public class Report {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+@AllArgsConstructor
+@NoArgsConstructor
+public class ReportDTO {
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     private PersonType personType;
 
-    @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus;
 
-    @Enumerated(EnumType.STRING)
     private RejectionReason rejectionReason;
 
-    @Enumerated(EnumType.STRING)
     private Edits edits;
 
     private int period;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="taxpayer_id")
     private User taxpayer;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="inspector_id")
     private User inspector;
+
+    private User replacedInspector;
 
     //IndividualPersonReport
     private String name;
@@ -58,17 +49,15 @@ public class Report {
     private int financialTurnover;
     private int employeesNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="replaced_inspector_id")
-    private User replacedInspector;
+    private List<User> replacedInspectors = new ArrayList<>();
 
-    public Report(String companyName, int financialTurnover, int employeesNumber){
+    public ReportDTO(String companyName, int financialTurnover, int employeesNumber){
         this.companyName = companyName;
         this.financialTurnover = financialTurnover;
         this.employeesNumber = employeesNumber;
     }
 
-    public Report( String name, String surname, String patronymic, String workplace, double salary ){
+    public ReportDTO(String name, String surname, String patronymic, String workplace, double salary ){
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;

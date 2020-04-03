@@ -10,11 +10,14 @@ import java.util.Collection;
 import java.util.Set;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="usr")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String username;
@@ -28,11 +31,11 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     public boolean isInspector(){
-        return roles.contains(Role.INSPECTOR);
+        return roles.contains(Role.ROLE_INSPECTOR);
     }
 
     public boolean isAdmin(){
-        return roles.contains(Role.ADMIN);
+        return roles.contains(Role.ROLE_ADMIN);
     }
 
     @Override

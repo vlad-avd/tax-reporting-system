@@ -12,11 +12,11 @@ public class MainController {
 
     @GetMapping("/individual-person-report")
     public String createIndividualPersonReport(){
-        return "fillIndividualPersonReport";
+        return "create-individual-person-report";
     }
 
     @GetMapping("/legal-entity-report")
     public String createLegalEntityReport(){
-        return "fillLegalEntityReport";
+        return "create-legal-entity-report";
     }
 }

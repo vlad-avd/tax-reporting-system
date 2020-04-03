@@ -1,4 +1,4 @@
-<#import "parts/common.ftlh" as c>
+<#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
 <@c.page>
 <div>
@@ -40,13 +40,13 @@
     </div>
 </div>
 <div class="form-group mt-3">
-    <form action="/user/replace-inspector">
+    <form action="/user/replace-inspector/${report.id}">
         <button class="btn btn-primary" type="submit"><@spring.message "messages.user.replace.inspector"/></button>
     </form>
 </div>
 <div class="form-group mt-3">
     <form action="/individual-person-report">
-        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.createIndividualPersonReport"/></button>
+        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.individual.person.report"/></button>
     </form>
 </div>
 <div class="form-group">

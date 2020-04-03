@@ -1,4 +1,4 @@
-<#import "parts/common.ftlh" as c>
+<#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
 <@c.page>
 <table>
@@ -16,13 +16,14 @@
             <td>${report.id}</td>
             <td>${report.reportStatus}</td>
             <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>
+            <#if report.reportStatus.toString() == "NEED_TO_EDIT"><td><a href="/report/${report.id}"><@spring.message "messages.report.edit"/></a></td></#if>
         </tr>
     </#list>
     </tbody>
 </table>
 <div class="form-group mt-3">
     <form action="/individual-person-report">
-        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.createIndividualPersonReport"/></button>
+        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.individual.person.report"/></button>
     </form>
 </div>
 <div class="form-group">

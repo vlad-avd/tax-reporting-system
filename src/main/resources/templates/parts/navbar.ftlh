@@ -33,6 +33,10 @@
         </form>
     </#if>
 
+    <select class="selectpicker" data-width="fit">
+        <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
+        <option data-content='<span class="flag-icon flag-icon-ru"></span> Español'>Español</option>
+    </select>
     <span><@spring.message "messages.lang.change"/></span>
 
     <a href="?lang=en">
