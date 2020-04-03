@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
@@ -11,6 +12,8 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,23 +21,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class ReportDTO {
-    private Long id;
+    protected Long id;
 
-    private PersonType personType;
+    protected PersonType personType;
 
-    private ReportStatus reportStatus;
+    protected ReportStatus reportStatus;
 
-    private RejectionReason rejectionReason;
+    protected RejectionReason rejectionReason;
 
-    private Edits edits;
+    protected Edits edits;
 
-    private int period;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    protected LocalDate taxPeriodFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    protected LocalDate taxPeriodTo;
 
-    private User taxpayer;
+    protected User taxpayer;
 
-    private User inspector;
+    protected User inspector;
 
-    private User replacedInspector;
+    protected User replacedInspector;
 
 //    //IndividualPersonReport
 //    private String name;

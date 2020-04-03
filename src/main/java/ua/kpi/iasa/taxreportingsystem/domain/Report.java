@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -36,7 +38,10 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private Edits edits;
 
-    private int period;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate taxPeriodFrom;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate taxPeriodTo;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="taxpayer_id")
@@ -51,24 +56,24 @@ public class Report {
     private String surname;
     private String patronymic;
     private String workplace;
-    private double salary;
+    private BigDecimal salary;
 
     //LegalEntityReport
     private String companyName;
-    private int financialTurnover;
+    private BigDecimal financialTurnover;
     private int employeesNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="replaced_inspector_id")
     private User replacedInspector;
 
-    public Report(String companyName, int financialTurnover, int employeesNumber){
+    public Report(String companyName, BigDecimal financialTurnover, int employeesNumber){
         this.companyName = companyName;
         this.financialTurnover = financialTurnover;
         this.employeesNumber = employeesNumber;
     }
 
-    public Report( String name, String surname, String patronymic, String workplace, double salary ){
+    public Report( String name, String surname, String patronymic, String workplace, BigDecimal salary ){
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;

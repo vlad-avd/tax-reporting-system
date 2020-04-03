@@ -40,7 +40,8 @@ public class ReportService {
                         .personType(PersonType.INDIVIDUAL_PERSON)
                         .reportStatus(ReportStatus.ON_VERIFYING)
                         .taxpayer(reportDTO.getTaxpayer())
-                        .period(reportDTO.getPeriod())
+                        .taxPeriodFrom(reportDTO.getTaxPeriodFrom())
+                        .taxPeriodTo(reportDTO.getTaxPeriodTo())
                         .build());
     }
 

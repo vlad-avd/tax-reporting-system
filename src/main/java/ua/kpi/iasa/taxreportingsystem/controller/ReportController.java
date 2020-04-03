@@ -1,6 +1,7 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,9 @@ import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Controller
 public class ReportController {
@@ -33,8 +37,14 @@ public class ReportController {
 
     @PostMapping("/report/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
-                                         IndividualPersonReportDTO reportDTO, Model model){
-        reportDTO.setPeriod(1);
+                                         IndividualPersonReportDTO reportDTO,
+                                         @RequestParam("taxPeriodFrom")
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodFrom,
+                                         @RequestParam("taxPeriodTo")
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodTo, Model model){
+
+        reportDTO.setTaxPeriodFrom(taxPeriodFrom);
+        reportDTO.setTaxPeriodTo(taxPeriodTo);
         reportDTO.setTaxpayer(user);
         reportService.createIndividualPersonReport(reportDTO);
 

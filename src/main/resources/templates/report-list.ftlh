@@ -12,7 +12,7 @@
     <tbody>
     <#list reports as report>
         <tr>
-            <td>${report.period}</td>
+            <td>${report.taxPeriodFrom} <br> ${report.taxPeriodTo}</td>
             <td>${report.id}</td>
             <td>${report.reportStatus}</td>
             <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>

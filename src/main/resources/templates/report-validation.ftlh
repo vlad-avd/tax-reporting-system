@@ -25,7 +25,11 @@
         </div>
         <div>
             <span><@spring.message "messages.report.period"/></span>
-            <span>${report.period}</span>
+            <span>${report.taxPeriodFrom}</span>
+        </div>
+        <div>
+            <span><@spring.message "messages.report.period"/></span>
+            <span>${report.taxPeriodTo}</span>
         </div>
         <div>
             <span><@spring.message "messages.report.person.type"/></span>

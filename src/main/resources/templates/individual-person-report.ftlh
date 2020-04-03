@@ -23,8 +23,12 @@
         <span>${report.salary}</span>
     </div>
     <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.period"/>:</span>
-        <span>${report.period}</span>
+        <span class="h6 mb-1"><@spring.message "messages.report.taxPeriodFrom"/>:</span>
+        <span>${report.taxPeriodFrom}</span>
+    </div>
+    <div class="border-bottom mb-2 col-md-4">
+        <span class="h6 mb-1"><@spring.message "messages.report.taxPeriodTo"/>:</span>
+        <span>${report.taxPeriodTo}</span>
     </div>
     <div class="border-bottom mb-2 col-md-4">
         <span class="h6 mb-1"><@spring.message "messages.report.person.type"/>:</span>
