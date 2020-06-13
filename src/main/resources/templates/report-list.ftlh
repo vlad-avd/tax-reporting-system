@@ -16,7 +16,6 @@
         <tr>
             <th scope="row">${reportNumber}</th>
             <#assign reportNumber++>
-            <td>${report.taxPeriodFrom} <br> ${report.taxPeriodTo}</td>
             <td>${report.personType}</td>
             <td>${report.reportStatus}</td>
             <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>

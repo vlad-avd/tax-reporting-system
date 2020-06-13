@@ -5,7 +5,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.full.name"/> : </label>
         <div class="col-sm-4">
-            <input type="text" name="patronymic" class="form-control" placeholder=<@spring.message "messages.individual.person.report.full.name"/>>
+            <input type="text" name="fullName" class="form-control" placeholder=<@spring.message "messages.individual.person.report.full.name"/>>
         </div>
     </div>
     <div class="form-group row">

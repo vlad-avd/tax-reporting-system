@@ -16,6 +16,7 @@ import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Controller
 public class ReportController {
@@ -23,9 +24,19 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
+    @GetMapping("/individual-person-report")
+    public String createIndividualPersonReport(){
+        return "create-individual-person-report";
+    }
+
+    @GetMapping("/legal-entity-report")
+    public String createLegalEntityReport(){
+        return "create-legal-entity-report";
+    }
+
     @GetMapping("/report")
     public String reportList(@AuthenticationPrincipal User user, Model model){
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
+        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).orElse(new ArrayList<>()));
 
         return "report-list";
     }
@@ -39,13 +50,8 @@ public class ReportController {
     @PostMapping("/report/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
                                          IndividualPersonReportDTO reportDTO,
-                                         @RequestParam("taxPeriodFrom")
-                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodFrom,
-                                         @RequestParam("taxPeriodTo")
-                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodTo, Model model){
+                                         Model model){
 
-        reportDTO.setTaxPeriodFrom(taxPeriodFrom);
-        reportDTO.setTaxPeriodTo(taxPeriodTo);
         reportDTO.setTaxpayer(user);
         try {
             reportService.createIndividualPersonReport(reportDTO);
@@ -53,7 +59,7 @@ public class ReportController {
             e.printStackTrace();
         }
 
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
+        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
 
         return "report-list";
     }
@@ -61,17 +67,12 @@ public class ReportController {
     @PostMapping("/report/legal-entity-report")
     public String legalEntityReport(@AuthenticationPrincipal User user,
                                     LegalEntityReportDTO reportDTO,
-                                    @RequestParam("taxPeriodFrom")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodFrom,
-                                    @RequestParam("taxPeriodTo")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate taxPeriodTo, Model model){
+                                    Model model){
 
-        reportDTO.setTaxPeriodFrom(taxPeriodFrom);
-        reportDTO.setTaxPeriodTo(taxPeriodTo);
         reportDTO.setTaxpayer(user);
         reportService.createLegalEntityReport(reportDTO);
 
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
+        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
 
         return "report-list";
     }
