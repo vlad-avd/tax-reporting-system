@@ -10,9 +10,11 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/"><@spring.message "messages.navbar.home"/></a>
             </li>
+            <#if user??>
             <li class="nav-item active">
                 <a class="nav-link" href="/report"> <@spring.message "messages.navbar.user.reports"/></a>
             </li>
+            </#if>
             <#if isInspector>
                 <li class="nav-item active">
                     <a class="nav-link" href="/verification-reports"><@spring.message "messages.navbar.inspector.reports"/></a>

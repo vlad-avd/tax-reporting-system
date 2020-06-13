@@ -14,9 +14,6 @@
             </div>
         </div>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <#if !isRegisterForm>
-            <a href="/registration"><@spring.message "messages.account.add"/></a>
-        </#if>
         <button class="btn btn-primary" type="submit"><#if isRegisterForm><@spring.message "messages.account.create"/> <#else><@spring.message "messages.account.sign.in"/></#if></button>
     </form>
 </#macro>
