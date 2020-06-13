@@ -14,6 +14,7 @@ import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,7 +68,9 @@ public class UserController {
     @GetMapping("/replace-inspector/{report}")
     public String replaceInspector(@PathVariable Report report, Model model){
         model.addAttribute("message", "Request for a replacement inspector has been sent");
-        report.setReplacedInspector(report.getInspector());
+        List<User> replacedInspectors = report.getReplacedInspectors();
+        replacedInspectors.add(report.getInspector());
+        report.setReplacedInspectors(replacedInspectors);
         report.setReportStatus(ReportStatus.ON_VERIFYING);
         reportService.saveReport(report);
 

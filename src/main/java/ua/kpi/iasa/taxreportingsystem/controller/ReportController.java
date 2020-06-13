@@ -61,7 +61,7 @@ public class ReportController {
 
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
 
-        return "report-list";
+        return "redirect:/report-list";
     }
 
     @PostMapping("/report/legal-entity-report")
@@ -74,6 +74,6 @@ public class ReportController {
 
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
 
-        return "report-list";
+        return "redirect:/report-list";
     }
 }

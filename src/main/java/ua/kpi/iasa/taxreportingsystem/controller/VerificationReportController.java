@@ -30,7 +30,7 @@ public class VerificationReportController {
     @GetMapping("/verification-reports")
     public String unverifiedReports(@AuthenticationPrincipal User user, Model model){
         Optional<List<Report>> reports = reportService.getVerificationReports(user);
-        model.addAttribute("reports", reports);
+        model.addAttribute("reports", reports.get());
 
         return "verification-report-list";
     }
@@ -59,7 +59,7 @@ public class VerificationReportController {
         }
         else if(reportStatus.equals("sendToEdit")){
             report.setReportStatus(ReportStatus.NEED_TO_EDIT);
-            report.setEdits(Edits.valueOf(message));
+            //report.setEdits(Edits.valueOf(message));
         }
         report.setInspector(user);
         reportService.saveReport(report);
