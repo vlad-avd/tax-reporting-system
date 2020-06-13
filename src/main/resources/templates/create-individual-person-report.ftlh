@@ -3,44 +3,20 @@
 <@c.page>
 <form action="/report/individual-person-report" method="post">
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.first.name"/> : </label>
-        <div class="col-sm-6">
-            <input type="text" name="name" class="form-control" placeholder=<@spring.message "messages.individual.person.report.first.name"/>>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.last.name"/> : </label>
-        <div class="col-sm-6">
-            <input type="text" name="surname" class="form-control" placeholder=<@spring.message "messages.individual.person.report.last.name"/>>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.patronymic"/> : </label>
-        <div class="col-sm-6">
-            <input type="text" name="patronymic" class="form-control" placeholder=<@spring.message "messages.individual.person.report.patronymic"/>>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.report.taxPeriodFrom"/> : </label>
-        <div class="col-sm-6">
-            <input type="text" name="taxPeriodFrom" class="form-control" placeholder=<@spring.message "messages.report.taxPeriodFrom"/>>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label"> <@spring.message "messages.report.taxPeriodFrom"/> : </label>
-        <div class="col-sm-6">
-            <input type="text" name="taxPeriodTo" class="form-control" placeholder=<@spring.message "messages.report.taxPeriodTo"/>>
+        <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.full.name"/> : </label>
+        <div class="col-sm-4">
+            <input type="text" name="patronymic" class="form-control" placeholder=<@spring.message "messages.individual.person.report.full.name"/>>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.workplace"/> : </label>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <input type="text" name="workplace" class="form-control" placeholder=<@spring.message "messages.individual.person.report.workplace"/>>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label"> <@spring.message "messages.individual.person.report.salary"/>: </label>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <input type="text" name="salary" class="form-control" placeholder=<@spring.message "messages.individual.person.report.salary"/>>
         </div>
     </div>

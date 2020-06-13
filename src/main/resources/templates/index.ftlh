@@ -3,6 +3,7 @@
 <#include "parts/security.ftlh">
 <@c.page>
 <div class="container">
+    <h3><@spring.message "messages.task.description.title"/></h3>
     <@spring.message "messages.app.description"/>
     <#if user??>
     <#else>
