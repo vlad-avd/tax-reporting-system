@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -14,9 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class IndividualPersonReportDTO extends ReportDTO {
     //IndividualPersonReport
-    private String name;
-    private String surname;
-    private String patronymic;
+    private String fullName;
     private String workplace;
     private BigDecimal salary;
 }

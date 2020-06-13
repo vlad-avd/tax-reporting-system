@@ -18,8 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="report")
-public class Report {
+@Table(name="archive")
+public class Archive {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -58,15 +58,4 @@ public class Report {
             joinColumns=@JoinColumn (name="report_id"),
             inverseJoinColumns=@JoinColumn(name="inspector_id"))
     private List<User> replacedInspectors;
-
-    public Report(String companyName, BigDecimal financialTurnover){
-        this.companyName = companyName;
-        this.financialTurnover = financialTurnover;
-    }
-
-    public Report(String fullName, String workplace, BigDecimal salary ){
-        this.fullName = fullName;
-        this.workplace = workplace;
-        this.salary = salary;
-    }
 }
