@@ -12,6 +12,7 @@ import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -20,14 +21,16 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepo.findByUsername(username);
+        return userRepo.findByUsername(username)
+                                                .orElseThrow(() -> new UsernameNotFoundException(
+                                                                "User with username: " + username + "is not found"));
     }
 
     public List<User> getAllUsers(){
         return userRepo.findAll();
     }
 
-    public User findByUsername(String username){
+    public Optional<User> findByUsername(String username){
         return userRepo.findByUsername(username);
     }
 

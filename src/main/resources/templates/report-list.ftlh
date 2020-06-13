@@ -1,19 +1,23 @@
 <#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
 <@c.page>
-<table>
+<table class="table">
     <thead>
     <tr>
-        <th><@spring.message "messages.report.period"/></th>
-        <th><@spring.message "messages.report.id"/></th>
-        <th><@spring.message "messages.report.status"/></th>
+        <th scope="col">#</th>
+        <th scope="col"><@spring.message "messages.report.period"/></th>
+        <th scope="col"><@spring.message "messages.report.person.type"/></th>
+        <th scope="col"><@spring.message "messages.report.status"/></th>
     </tr>
     </thead>
     <tbody>
+    <#assign reportNumber = 1>
     <#list reports as report>
         <tr>
+            <th scope="row">${reportNumber}</th>
+            <#assign reportNumber++>
             <td>${report.taxPeriodFrom} <br> ${report.taxPeriodTo}</td>
-            <td>${report.id}</td>
+            <td>${report.personType}</td>
             <td>${report.reportStatus}</td>
             <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>
             <#if report.reportStatus.toString() == "NEED_TO_EDIT"><td><a href="/report/${report.id}"><@spring.message "messages.report.edit"/></a></td></#if>

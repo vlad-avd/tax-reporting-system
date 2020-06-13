@@ -3,7 +3,7 @@
 <@c.page>
     Report check
     <div class="container mt-5">
-        <#if report.personType == "INDIVIDUAL_PERSON">
+        <#if report.personType == "INDIVIDUAL">
             <div class="border-bottom mb-2 col-md-4">
                 <span class="h6"><@spring.message "messages.individual.person.report.first.name"/>:</span>
                 <span>${report.name}</span>

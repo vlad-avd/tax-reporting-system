@@ -2,61 +2,61 @@
 <#import "/spring.ftl" as spring/>
 <@c.page>
 <div>
-<#if report.personType == "INDIVIDUAL_PERSON">
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6"><@spring.message "messages.individual.person.report.first.name"/>:</span>
-        <span>${report.name}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.individual.person.report.last.name"/>:</span>
-        <span>${report.surname}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.individual.person.report.patronymic"/>:</span>
-        <span>${report.patronymic}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.individual.person.report.workplace"/>:</span>
-        <span>${report.workplace}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.individual.person.report.salary"/>:</span>
-        <span>${report.salary}</span>
-    </div>
-<#else>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.company.name"/>:</span>
-        <span>${report.companyName}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.employees.number"/>:</span>
-        <span>${report.employeesNumber}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.legal.entity.report.financial.turnover"/>:</span>
-        <span>${report.financialTurnover}</span>
-    </div>
-    </#if>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.taxPeriodFrom"/>:</span>
-        <span>${report.taxPeriodFrom}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.taxPeriodTo"/>:</span>
-        <span>${report.taxPeriodTo}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.person.type"/>:</span>
-        <span>${report.personType}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.status"/>:</span>
-        <span>${report.reportStatus}</span>
-    </div>
-    <div class="border-bottom mb-2 col-md-4">
-        <span class="h6 mb-1"><@spring.message "messages.report.id"/>:</span>
-        <span>${report.id}</span>
-    </div>
+    <table class="table">
+        <tbody>
+        <#if report.personType == "INDIVIDUAL">
+            <tr>
+                <th><@spring.message "messages.individual.person.report.first.name"/>:</th>
+                <td>${report.name}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.individual.person.report.last.name"/>:</th>
+                <td>${report.surname}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.individual.person.report.patronymic"/>:</th>
+                <td>${report.patronymic}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.individual.person.report.workplace"/>:</th>
+                <td>${report.workplace}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.individual.person.report.salary"/>:</th>
+                <td>${report.salary}</td>
+            </tr>
+        <#else>
+            <tr>
+                <th><@spring.message "messages.legal.entity.report.company.name"/>:</th>
+                <td>${report.companyName}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.legal.entity.report.employees.number"/>:</th>
+                <td>${report.employeesNumber}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.legal.entity.report.financial.turnover"/>:</th>
+                <td>${report.financialTurnover}</td>
+            </tr>
+        </#if>
+            <tr>
+                <th><@spring.message "messages.report.taxPeriodFrom"/>:</th>
+                <td>${report.taxPeriodFrom}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.report.taxPeriodTo"/>:</th>
+                <td>${report.taxPeriodTo}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.report.person.type"/>:</th>
+                <td>${report.personType}</td>
+            </tr>
+            <tr>
+                <th><@spring.message "messages.report.status"/>:</th>
+                <td>${report.reportStatus}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 <div class="form-group mt-3">
     <form action="/user/replace-inspector/${report.id}">

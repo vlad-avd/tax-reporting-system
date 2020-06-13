@@ -8,12 +8,13 @@ import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReportRepo extends JpaRepository<Report, Long> {
-    List<Report> findByTaxpayerId(Long id);
+    Optional<List<Report>> findByTaxpayerId(Long id);
     @Query(
             value = "SELECT * FROM report r WHERE r.report_status = 'ON_VERIFYING' and (r.replaced_inspector_id <> ? or r.replaced_inspector_id is NULL)",
             nativeQuery = true)
-    List<Report> getVerificationReports(User user);
+    Optional<List<Report>> getVerificationReports(User user);
 }

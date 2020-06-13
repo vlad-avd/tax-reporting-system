@@ -6,7 +6,8 @@ import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User, Long> {
-    public User findByUsername(String username);
+    public Optional<User> findByUsername(String username);
 }

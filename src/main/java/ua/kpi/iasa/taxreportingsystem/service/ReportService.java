@@ -12,17 +12,18 @@ import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
 import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReportService {
     @Autowired
     private ReportRepo reportRepo;
 
-    public List<Report> get(User user){
+    public Optional<List<Report>> getVerificationReports(User user){
         return reportRepo.getVerificationReports(user);
     }
 
-    public List<Report> getUserSubmittedReports(Long id){
+    public Optional<List<Report>> getUserSubmittedReports(Long id){
         return reportRepo.findByTaxpayerId(id);
     }
 
@@ -30,14 +31,14 @@ public class ReportService {
         reportRepo.save(report);
     }
 
-    public Report createIndividualPersonReport(IndividualPersonReportDTO reportDTO){
+    public Report createIndividualPersonReport(IndividualPersonReportDTO reportDTO) throws Exception{
         return reportRepo.save(Report.builder()
                         .name(reportDTO.getName())
                         .surname(reportDTO.getSurname())
                         .patronymic(reportDTO.getPatronymic())
                         .workplace(reportDTO.getWorkplace())
                         .salary(reportDTO.getSalary())
-                        .personType(PersonType.INDIVIDUAL_PERSON)
+                        .personType(PersonType.INDIVIDUAL)
                         .reportStatus(ReportStatus.ON_VERIFYING)
                         .taxPeriodFrom(reportDTO.getTaxPeriodFrom())
                         .taxPeriodTo(reportDTO.getTaxPeriodTo())
@@ -50,7 +51,7 @@ public class ReportService {
                         .companyName(reportDTO.getCompanyName())
                         .employeesNumber(reportDTO.getEmployeesNumber())
                         .financialTurnover(reportDTO.getFinancialTurnover())
-                        .personType(PersonType.LEGAL_ENTITY)
+                        .personType(PersonType.ENTITY)
                         .reportStatus(ReportStatus.ON_VERIFYING)
                         .taxPeriodFrom(reportDTO.getTaxPeriodFrom())
                         .taxPeriodTo(reportDTO.getTaxPeriodTo())

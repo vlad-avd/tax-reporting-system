@@ -17,6 +17,9 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 
+import java.util.List;
+import java.util.Optional;
+
 @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_INSPECTOR')")
 @Controller
 public class VerificationReportController {
@@ -26,7 +29,7 @@ public class VerificationReportController {
 
     @GetMapping("/verification-reports")
     public String unverifiedReports(@AuthenticationPrincipal User user, Model model){
-        Iterable<Report> reports = reportService.get(user);
+        Optional<List<Report>> reports = reportService.getVerificationReports(user);
         model.addAttribute("reports", reports);
 
         return "verification-report-list";
@@ -60,7 +63,7 @@ public class VerificationReportController {
         }
         report.setInspector(user);
         reportService.saveReport(report);
-        model.addAttribute("reports", reportService.get(user));
+        model.addAttribute("reports", reportService.getVerificationReports(user));
 
         return "redirect:/verification-reports";
     }

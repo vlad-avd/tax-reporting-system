@@ -47,7 +47,11 @@ public class ReportController {
         reportDTO.setTaxPeriodFrom(taxPeriodFrom);
         reportDTO.setTaxPeriodTo(taxPeriodTo);
         reportDTO.setTaxpayer(user);
-        reportService.createIndividualPersonReport(reportDTO);
+        try {
+            reportService.createIndividualPersonReport(reportDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()));
 
