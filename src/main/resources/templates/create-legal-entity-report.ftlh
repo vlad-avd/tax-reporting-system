@@ -8,12 +8,22 @@
                 <input type="text" name="companyName" class="form-control" placeholder=<@spring.message "messages.legal.entity.report.company.name"/>>
             </div>
         </div>
+        <#if isCompanyNameValid??>
+        <#if isCompanyNameValid == false>
+            <div class="alert alert-danger"><p><@spring.message "messages.incorrect.input"/></p></div>
+        </#if>
+        </#if>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label"> <@spring.message "messages.legal.entity.report.financial.turnover"/> : </label>
             <div class="col-sm-4">
                 <input type="text" name="financialTurnover" class="form-control" placeholder=<@spring.message "messages.legal.entity.report.financial.turnover"/>>
             </div>
         </div>
+        <#if isFinancialTurnoverValid??>
+            <#if isFinancialTurnoverValid == false>
+                <div class="alert alert-danger"><p><@spring.message "messages.incorrect.input"/></p></div>
+            </#if>
+        </#if>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <button class="btn btn-primary" type="submit"><@spring.message "messages.report.submit"/></button>
     </form>

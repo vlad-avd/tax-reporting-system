@@ -25,12 +25,12 @@
     </tbody>
 </table>
 <div class="form-group mt-3">
-    <form action="/individual-person-report">
+    <form action="/report/individual-person-report">
         <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.individual.person.report"/></button>
     </form>
 </div>
 <div class="form-group">
-    <form action="/legal-entity-report">
+    <form action="/report/legal-entity-report">
         <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.legal.entity.report"/></button>
     </form>
 </div>

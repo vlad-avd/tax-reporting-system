@@ -1,22 +1,21 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDTO;
-import ua.kpi.iasa.taxreportingsystem.dto.ReportDTO;
-import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
+import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
+import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ReportController {
@@ -24,12 +23,12 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/individual-person-report")
+    @GetMapping("/report/individual-person-report")
     public String createIndividualPersonReport(){
         return "create-individual-person-report";
     }
 
-    @GetMapping("/legal-entity-report")
+    @GetMapping("/report/legal-entity-report")
     public String createLegalEntityReport(){
         return "create-legal-entity-report";
     }
@@ -44,24 +43,36 @@ public class ReportController {
     @GetMapping("/report/{report}")
     public String openReport(@PathVariable Report report, Model model){
         model.addAttribute("report", report);
-        return "individual-person-report";
+        return "report";
     }
 
     @PostMapping("/report/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
                                          IndividualPersonReportDTO reportDTO,
-                                         Model model){
+                                         Model model) throws NoSuchReportException {
 
-        reportDTO.setTaxpayer(user);
-        try {
+        ReportValidator reportValidator = new ReportValidator();
+
+        if(reportValidator.isFullNameValid(reportDTO.getFullName())
+                && reportValidator.isWorkplaceValid(reportDTO.getWorkplace())
+                && reportValidator.isSalaryValid(String.valueOf(reportDTO.getSalary()))) {
+
+            reportDTO.setTaxpayer(user);
+
             reportService.createIndividualPersonReport(reportDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
+
+            return "redirect:/report-list";
         }
 
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
+        else {
+            model.addAttribute("isFullNameValid", reportValidator.isFullNameValid(reportDTO.getFullName()));
+            model.addAttribute("isWorkplaceValid", reportValidator.isWorkplaceValid(reportDTO.getWorkplace()));
+            model.addAttribute("isSalaryValid", reportValidator.isSalaryValid(String.valueOf(reportDTO.getSalary())));
 
-        return "redirect:/report-list";
+            return "create-individual-person-report";
+        }
     }
 
     @PostMapping("/report/legal-entity-report")
@@ -69,11 +80,38 @@ public class ReportController {
                                     LegalEntityReportDTO reportDTO,
                                     Model model){
 
-        reportDTO.setTaxpayer(user);
-        reportService.createLegalEntityReport(reportDTO);
+        ReportValidator reportValidator = new ReportValidator();
 
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
+        if(reportValidator.isWorkplaceValid(reportDTO.getCompanyName())
+                && reportValidator.isSalaryValid(String.valueOf(reportDTO.getFinancialTurnover()))) {
 
-        return "redirect:/report-list";
+            reportDTO.setTaxpayer(user);
+
+            reportDTO.setTaxpayer(user);
+            reportService.createLegalEntityReport(reportDTO);
+
+            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
+
+            return "redirect:/report-list";
+        }
+
+        else {
+            model.addAttribute("isCompanyNameValid", reportValidator.isWorkplaceValid(reportDTO.getCompanyName()));
+            model.addAttribute("isFinancialTurnoverValid", reportValidator.isSalaryValid(String.valueOf(reportDTO.getFinancialTurnover())));
+
+            return "create-legal-entity-report";
+        }
+    }
+
+    @GetMapping("/replace-inspector/{report}")
+    public String replaceInspector(@PathVariable Report report, Model model){
+        model.addAttribute("message", "Request for a replacement inspector has been sent");
+        List<User> replacedInspectors = report.getReplacedInspectors();
+        replacedInspectors.add(report.getInspector());
+        report.setReplacedInspectors(replacedInspectors);
+        report.setReportStatus(ReportStatus.ON_VERIFYING);
+        reportService.saveReport(report);
+
+        return "message";
     }
 }
