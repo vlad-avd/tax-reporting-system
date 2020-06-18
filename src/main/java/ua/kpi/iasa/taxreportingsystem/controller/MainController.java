@@ -19,8 +19,13 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
     @GetMapping("/registration")
-    public String registratin(){
+    public String registration(){
         return "registration";
     }
 
