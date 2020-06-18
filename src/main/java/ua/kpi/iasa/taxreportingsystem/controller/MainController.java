@@ -28,10 +28,6 @@ public class MainController {
     @GetMapping("/registration")
     public String registration(Model model){
 
-        model.addAttribute("isUserExist", false);
-        model.addAttribute("isUsernameValid", true);
-        model.addAttribute("isPasswordValid", true);
-
         return "registration";
     }
 
