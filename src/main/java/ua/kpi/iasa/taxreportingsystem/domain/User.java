@@ -7,6 +7,7 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Data

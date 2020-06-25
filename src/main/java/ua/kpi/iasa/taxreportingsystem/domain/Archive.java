@@ -33,6 +33,8 @@ public class Archive {
     @Enumerated(EnumType.STRING)
     private RejectionReason rejectionReason;
 
+    private String comment;
+
     private LocalDate created;
     private LocalDate lastEdit;
 

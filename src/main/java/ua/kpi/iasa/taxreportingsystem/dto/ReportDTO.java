@@ -24,6 +24,8 @@ public abstract class ReportDTO {
 
     protected RejectionReason rejectionReason;
 
+    protected String comment;
+
     protected LocalDate created;
     protected LocalDate lastEdit;
 

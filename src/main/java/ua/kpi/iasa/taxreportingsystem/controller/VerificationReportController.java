@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
-import ua.kpi.iasa.taxreportingsystem.domain.enums.Edits;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
@@ -30,10 +29,9 @@ public class VerificationReportController {
     @GetMapping("/verification-report")
     public String unverifiedReports(@AuthenticationPrincipal User user,
                                     Model model,
-                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable) throws NoSuchReportException {
+                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException {
 
         model.addAttribute("reports", reportService.getVerificationReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
-        System.out.println(reportService.getVerificationReports(user.getId(), pageable).get());
         model.addAttribute("url", "/verification-report");
 
         return "verification-report-list";
@@ -42,7 +40,6 @@ public class VerificationReportController {
     @GetMapping("/verification-report/{reportId}")
     public String openReportAsInspector(@PathVariable("reportId") Report report, Model model){
         model.addAttribute("report", report);
-        model.addAttribute("edits", Edits.values());
         model.addAttribute("rejectionReasons", RejectionReason.values());
 
         return "report-validation";
@@ -51,25 +48,32 @@ public class VerificationReportController {
     @PostMapping("/check-report/{reportId}")
     public String checkReport(@PathVariable("reportId") Report report,
                               @AuthenticationPrincipal User user,
-                              @RequestParam(required = false) String message,
                               @RequestParam String reportStatus,
-                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable,
+                              @RequestParam(required = false) String rejectionReason,
+                              @RequestParam(required = false) String comment,
+                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable,
                               Model model){
 
-        if( reportStatus.equals("approve") ){
-            report.setReportStatus(ReportStatus.APPROVED);
+        if(!rejectionReason.isEmpty()) {
+            report.setRejectionReason(RejectionReason.valueOf(rejectionReason));
         }
-        else if( reportStatus.equals("reject") ){
+        if(!comment.isEmpty()) {
+            report.setComment(comment);
+        }
+        if(reportStatus.equals("approve") ){
+            report.setReportStatus(ReportStatus.APPROVED);
+            reportService.moveReportToArchive(report);
+        }
+        else if(reportStatus.equals("reject") ){
             report.setReportStatus(ReportStatus.REJECTED);
-            report.setRejectionReason(RejectionReason.valueOf(message));
+            reportService.moveReportToArchive(report);
         }
         else if(reportStatus.equals("sendToEdit")){
             report.setReportStatus(ReportStatus.NEED_TO_EDIT);
-            //report.setEdits(Edits.valueOf(message));
+            reportService.saveReport(report);
         }
-        reportService.saveReport(report);
         model.addAttribute("reports", reportService.getVerificationReports(user.getId(), pageable));
 
-        return "redirect:/verification-reports";
+        return "redirect:/verification-report";
     }
 }

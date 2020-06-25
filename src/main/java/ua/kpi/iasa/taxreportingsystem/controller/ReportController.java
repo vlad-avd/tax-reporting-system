@@ -57,7 +57,7 @@ public class ReportController {
     public String individualPersonReport(@AuthenticationPrincipal User user,
                                          IndividualPersonReportDTO reportDTO,
                                          Model model,
-                                         @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
+                                         @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
         ReportValidator reportValidator = new ReportValidator();
 
@@ -88,7 +88,7 @@ public class ReportController {
     public String legalEntityReport(@AuthenticationPrincipal User user,
                                     LegalEntityReportDTO reportDTO,
                                     Model model,
-                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
+                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
         ReportValidator reportValidator = new ReportValidator();
 
