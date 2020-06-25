@@ -50,9 +50,8 @@
     </#if>
     <#if report.reportStatus == 'NEED_TO_EDIT' && report.taxpayer.getId() == userId>
         <div class="form-group mt-3">
-            <form action="/report/edit/${report.id}&update=false" method="post">
+            <form action="/report/edit/${report.id}">
                 <button class="btn btn-primary" type="submit"><@spring.message "messages.report.edit"/></button>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form>
         </div>
     </#if>

@@ -20,6 +20,7 @@ import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -126,6 +127,26 @@ public class ReportController {
         report.setInspector(reportService.getInspectorIdWithLeastReportsNumber());
         reportService.saveReport(report);
 
+        return "redirect:/report";
+    }
+
+    @GetMapping("/report/edit/{report}")
+    public String editReportForm(@PathVariable Report report, Model model) {
+        model.addAttribute("report", report);
+        return "edit-report";
+    }
+
+    @PostMapping("/report/edit/{report}")
+    public String editReport(@PathVariable Report report, Report editedReport) {
+
+        report.setFullName(editedReport.getFullName());
+        report.setWorkplace(editedReport.getWorkplace());
+        report.setSalary(editedReport.getSalary());
+        report.setCompanyName(editedReport.getCompanyName());
+        report.setFinancialTurnover(editedReport.getFinancialTurnover());
+        report.setLastEdit(LocalDate.now());
+        report.setReportStatus(ReportStatus.ON_VERIFYING);
+        reportService.saveReport(editedReport);
         return "redirect:/report";
     }
 }

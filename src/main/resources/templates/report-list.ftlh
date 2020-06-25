@@ -16,7 +16,6 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col"><@spring.message "messages.report.period"/></th>
             <th scope="col"><@spring.message "messages.report.person.type"/></th>
             <th scope="col"><@spring.message "messages.report.status"/></th>
         </tr>
@@ -30,7 +29,6 @@
                 <td>${report.personType}</td>
                 <td>${report.reportStatus}</td>
                 <td><a href="/report/${report.id}"><@spring.message "messages.report.open"/></a></td>
-                <#if report.reportStatus.toString() == "NEED_TO_EDIT"><td><a href="/report/${report.id}"><@spring.message "messages.report.edit"/></a></td></#if>
             </tr>
         </#list>
         </tbody>
