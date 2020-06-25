@@ -1,16 +1,13 @@
 <#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
 <@c.page>
-<div class="container mt-5">
-    List of users
-    <table>
-        <thead>
+<div class="container">
+    <table class="table col-md-4">
         <tr>
             <th><@spring.message "messages.user.username"/></th>
             <th><@spring.message "messages.user.role"/></th>
             <th></th>
         </tr>
-        </thead>
         <tbody>
         <#list users as user>
             <tr>

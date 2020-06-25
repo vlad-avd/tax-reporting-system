@@ -1,5 +1,6 @@
 <#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
+<#import "parts/pager.ftlh" as p/>
 <@c.page>
     <table>
         <thead>
@@ -10,9 +11,8 @@
         </tr>
         </thead>
         <tbody>
-        <#list reports as report>
+        <#list reports.content as report>
             <tr>
-                <td>${report.taxPeriodFrom} <br> ${report.taxPeriodTo}</td>
                 <td>${report.id}</td>
                 <td>${report.reportStatus}</td>
                 <td><a href="/verification-report/${report.id}"><@spring.message "messages.report.open"/></a></td>
@@ -20,14 +20,5 @@
         </#list>
         </tbody>
     </table>
-    <div class="form-group mt-3">
-        <form action="/individual-person-report">
-            <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.individual.person.report"/></button>
-        </form>
-    </div>
-    <div class="form-group">
-        <form action="/legal-entity-report">
-            <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.legal.entity.report"/></button>
-        </form>
-    </div>
+    <@p.pager url reports/>
 </@c.page>

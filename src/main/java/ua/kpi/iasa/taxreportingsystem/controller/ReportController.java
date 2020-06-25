@@ -1,20 +1,25 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
 import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDTO;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
+import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,8 +39,10 @@ public class ReportController {
     }
 
     @GetMapping("/report")
-    public String reportList(@AuthenticationPrincipal User user, Model model){
-        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).orElse(new ArrayList<>()));
+    public String reportList(@AuthenticationPrincipal User user, Model model, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable) throws NoSuchReportException {
+        model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
+
+        model.addAttribute("url", "/report");
 
         return "report-list";
     }
@@ -49,7 +56,8 @@ public class ReportController {
     @PostMapping("/report/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
                                          IndividualPersonReportDTO reportDTO,
-                                         Model model) throws NoSuchReportException {
+                                         Model model,
+                                         @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
         ReportValidator reportValidator = new ReportValidator();
 
@@ -58,12 +66,13 @@ public class ReportController {
                 && reportValidator.isSalaryValid(String.valueOf(reportDTO.getSalary()))) {
 
             reportDTO.setTaxpayer(user);
+            reportDTO.setInspector(reportService.getInspectorIdWithLeastReportsNumber());
 
             reportService.createIndividualPersonReport(reportDTO);
 
-            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
+            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
 
-            return "redirect:/report-list";
+            return "redirect:/report";
         }
 
         else {
@@ -78,7 +87,8 @@ public class ReportController {
     @PostMapping("/report/legal-entity-report")
     public String legalEntityReport(@AuthenticationPrincipal User user,
                                     LegalEntityReportDTO reportDTO,
-                                    Model model){
+                                    Model model,
+                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
         ReportValidator reportValidator = new ReportValidator();
 
@@ -86,13 +96,13 @@ public class ReportController {
                 && reportValidator.isSalaryValid(String.valueOf(reportDTO.getFinancialTurnover()))) {
 
             reportDTO.setTaxpayer(user);
+            reportDTO.setInspector(reportService.getInspectorIdWithLeastReportsNumber());
 
-            reportDTO.setTaxpayer(user);
             reportService.createLegalEntityReport(reportDTO);
 
-            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId()).get());
+            model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
 
-            return "redirect:/report-list";
+            return "redirect:/report";
         }
 
         else {

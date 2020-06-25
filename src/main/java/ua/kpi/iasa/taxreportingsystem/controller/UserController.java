@@ -1,20 +1,16 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
-import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
-import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
-import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,14 +20,12 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private ReportService reportService;
 
-    @GetMapping
-    public String userList(Model model){
-        model.addAttribute("users", userService.getAllUsers());
+    @GetMapping("/profile")
+    public String userProfile(@AuthenticationPrincipal User user, Model model){
+        model.addAttribute("user", userService.loadUserByUsername(user.getUsername()));
 
-        return "user-list";
+        return "profile";
     }
 
     @GetMapping("{user}")
@@ -64,17 +58,4 @@ public class UserController {
 
         return "redirect:/user";
     }
-
-    @GetMapping("/replace-inspector/{report}")
-    public String replaceInspector(@PathVariable Report report, Model model){
-        model.addAttribute("message", "Request for a replacement inspector has been sent");
-        List<User> replacedInspectors = report.getReplacedInspectors();
-        replacedInspectors.add(report.getInspector());
-        report.setReplacedInspectors(replacedInspectors);
-        report.setReportStatus(ReportStatus.ON_VERIFYING);
-        reportService.saveReport(report);
-
-        return "message";
-    }
-
 }
