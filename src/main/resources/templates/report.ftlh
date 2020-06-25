@@ -37,10 +37,24 @@
             </tr>
         </tbody>
     </table>
-    <div class="form-group mt-3">
-        <form action="/user/replace-inspector/${report.id}">
-            <button class="btn btn-primary" type="submit"><@spring.message "messages.user.replace.inspector"/></button>
-        </form>
-    </div>
+    <#if (report.reportStatus == 'NEED_TO_EDIT'
+    || report.reportStatus == 'ON_VERIFYING')
+    && replaceInspector == true
+    && report.taxpayer.getId() == userId>
+        <div class="form-group mt-3">
+            <form action="/replace-inspector/${report.id}" method="post">
+                <button class="btn btn-primary" type="submit"><@spring.message "messages.user.replace.inspector"/></button>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+        </div>
+    </#if>
+    <#if report.reportStatus == 'NEED_TO_EDIT' && report.taxpayer.getId() == userId>
+        <div class="form-group mt-3">
+            <form action="/report/edit/${report.id}&update=false" method="post">
+                <button class="btn btn-primary" type="submit"><@spring.message "messages.report.edit"/></button>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+        </div>
+    </#if>
 </div>
 </@c.page>

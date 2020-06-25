@@ -126,4 +126,13 @@ public class ReportService {
         reportRepo.delete(report);
         archiveRepo.save(reportToArchive(report));
     }
+
+    public boolean isPossiblyToReplaceInspector(Long reportId) {
+        List<Long> inspectors = reportRepo.getAllInspectorIds();
+        System.out.println("All inspectors: " + inspectors);
+        List<Long> replacedInspectors = reportRepo.getReplacedInspectorsByReportId(reportId);
+        System.out.println("Replaced inspectors: " + replacedInspectors);
+
+        return (inspectors.size() - replacedInspectors.size()) > 1;
+    }
 }

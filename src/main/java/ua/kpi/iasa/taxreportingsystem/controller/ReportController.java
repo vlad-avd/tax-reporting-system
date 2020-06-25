@@ -48,8 +48,12 @@ public class ReportController {
     }
 
     @GetMapping("/report/{report}")
-    public String openReport(@PathVariable Report report, Model model){
+    public String openReport(@AuthenticationPrincipal User user,
+                             @PathVariable Report report,
+                             Model model){
         model.addAttribute("report", report);
+        model.addAttribute("userId", user.getId());
+        model.addAttribute("replaceInspector", reportService.isPossiblyToReplaceInspector(report.getId()));
         return "report";
     }
 
@@ -113,15 +117,15 @@ public class ReportController {
         }
     }
 
-    @GetMapping("/replace-inspector/{report}")
-    public String replaceInspector(@PathVariable Report report, Model model){
-        model.addAttribute("message", "Request for a replacement inspector has been sent");
+    @PostMapping("/replace-inspector/{report}")
+    public String replaceInspector(@PathVariable Report report) throws NoSuchUserException {
         List<User> replacedInspectors = report.getReplacedInspectors();
         replacedInspectors.add(report.getInspector());
         report.setReplacedInspectors(replacedInspectors);
         report.setReportStatus(ReportStatus.ON_VERIFYING);
+        report.setInspector(reportService.getInspectorIdWithLeastReportsNumber());
         reportService.saveReport(report);
 
-        return "message";
+        return "redirect:/report";
     }
 }

@@ -34,14 +34,14 @@ public interface ReportRepo extends JpaRepository<Report, Long> {
     List<Long> getAllInspectorIdsFromReports();
 
     @Query(
-            value = "SELECT (inspector_id) FROM reports_replaced_inspector WHERE report_id = :id",
+            value = "SELECT (inspector_id) FROM report_replaced_inspector WHERE report_id = :id",
             nativeQuery = true)
     List<Long> getReplacedInspectorsByReportId(@Param("id") Long reportId);
 
     @Transactional
     @Modifying
     @Query(
-            value = "DELETE FROM reports_replaced_inspector WHERE report_id = :id",
+            value = "DELETE FROM report_replaced_inspector WHERE report_id = :id",
             nativeQuery = true)
     void deleteReplacedInspectors(@Param("id") Long reportId);
 }
