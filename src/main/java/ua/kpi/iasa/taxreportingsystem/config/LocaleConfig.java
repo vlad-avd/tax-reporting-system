@@ -1,6 +1,5 @@
 package ua.kpi.iasa.taxreportingsystem.config;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -31,7 +30,6 @@ public class LocaleConfig implements WebMvcConfigurer {
     public ResourceBundleMessageSource bundleMessageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
-//        messageSource.setCacheSeconds(3600);
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }

@@ -21,7 +21,7 @@
         </tr>
         </thead>
         <tbody>
-        <#assign reportNumber = 1>
+        <#assign reportNumber = reports.getNumber() * reports.getSize() + 1>
         <#list reports.content as report>
             <tr>
                 <th scope="row">${reportNumber}</th>

@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface ReportRepo extends JpaRepository<Report, Long> {
 
     Optional<Page<Report>> findByTaxpayerId(Long id, Pageable pageable);
+    List<Report> findByTaxpayerId(Long id);
 
     @Query(
             value = "SELECT * FROM report AS r WHERE r.report_status = 'ON_VERIFYING' and r.inspector_id = :id",

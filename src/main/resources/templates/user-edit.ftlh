@@ -1,18 +1,34 @@
 <#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
 <@c.page>
-User editor
-<div class="container mt-5">
-    <form action="/user" method="post">
-        <input type="text" name="username" value="${user.username}">
+<div class="container">
+    <form action="/user/edit/${user.id}" method="post">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label"><strong> <@spring.message "messages.account.new.username"/>:</strong></label>
+            <div class="col-sm-4">
+                <input type="text" name="username" class="form-control" value="${user.username}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label"><strong> <@spring.message "messages.account.new.password"/>:</strong></label>
+            <div class="col-sm-4">
+                <input type="text" name="password" class="form-control" value="${user.password}">
+            </div>
+        </div>
         <#list roles as role>
-            <div>
-                <label><input type="checkbox" name="${role}" ${user.roles?seq_contains(role)?string("checked", "")}>${role}</label>
+            <div class="col-sm-8 form-check form-check-inline">
+                <label class="form-check-label" style="margin-right: 30px">
+                    <input class="form-check-input radio-inline" type="checkbox" type="checkbox" name="${role}" ${user.roles?seq_contains(role)?string("checked", "")}>${role}
+                </label>
             </div>
         </#list>
-        <input type="hidden" value="${user.id}" name="userId">
         <input type="hidden" value="${_csrf.token}" name="_csrf">
-        <button type="submit"><@spring.message "messages.user.save"/></button>
+        <div>
+            <button class="btn btn-primary" type="submit"><@spring.message "messages.user.save"/></button>
+        </div>
+    </form>
+    <form action="/user">
+        <button class="btn btn-primary" type="submit"><@spring.message "messages.user.cancel"/></button>
     </form>
 </div>
 </@c.page>

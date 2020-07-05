@@ -42,7 +42,7 @@
     && replaceInspector == true
     && report.taxpayer.getId() == userId>
         <div class="form-group mt-3">
-            <form action="/replace-inspector/${report.id}" method="post">
+            <form action="/report/replace-inspector/${report.id}" method="post">
                 <button class="btn btn-primary" type="submit"><@spring.message "messages.user.replace.inspector"/></button>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form>

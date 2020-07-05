@@ -11,8 +11,9 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LegalEntityReportDTO extends ReportDTO {
-    //LegalEntityReport
-    private String companyName;
-    private BigDecimal financialTurnover;
+public class IndividualPersonReportDto extends ReportDto {
+    //IndividualPersonReport
+    private String fullName;
+    private String workplace;
+    private BigDecimal salary;
 }

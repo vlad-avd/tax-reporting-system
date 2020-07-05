@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
-import ua.kpi.iasa.taxreportingsystem.dto.UserDTO;
+import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 
 import java.util.Collections;
@@ -16,8 +16,13 @@ import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    private final UserRepo userRepo;
+
     @Autowired
-    private UserRepo userRepo;
+    public UserService(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,8 +43,8 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
     }
 
-    public User createUser(UserDTO userDTO){
-        return userRepo.save(User.builder()
+    public void createUser(UserDto userDTO){
+        userRepo.save(User.builder()
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .roles(Collections.singleton(Role.ROLE_USER))

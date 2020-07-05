@@ -1,5 +1,7 @@
 package ua.kpi.iasa.taxreportingsystem.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -7,14 +9,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
-import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDTO;
-import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDTO;
+import ua.kpi.iasa.taxreportingsystem.dto.IndividualPersonReportDto;
+import ua.kpi.iasa.taxreportingsystem.dto.LegalEntityReportDto;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
@@ -24,31 +24,52 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
+@RequestMapping("/report")
 public class ReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
 
-    @GetMapping("/report/individual-person-report")
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
+    @Autowired
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+    @ExceptionHandler(NoSuchReportException.class)
+    public String handleNoSuchReportException(NoSuchReportException exception) {
+        logger.error(exception.getMessage() + exception);
+        return "redirect:/error";
+    }
+
+    @ExceptionHandler(NoSuchUserException.class)
+    public String handleNoSuchUserException(NoSuchUserException exception) {
+        logger.error(exception.getMessage() + exception);
+        return "redirect:/error";
+    }
+
+    @GetMapping("/individual-person-report")
     public String createIndividualPersonReport(){
         return "create-individual-person-report";
     }
 
-    @GetMapping("/report/legal-entity-report")
+    @GetMapping("/legal-entity-report")
     public String createLegalEntityReport(){
         return "create-legal-entity-report";
     }
 
-    @GetMapping("/report")
-    public String reportList(@AuthenticationPrincipal User user, Model model, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 1) Pageable pageable) throws NoSuchReportException {
+    @GetMapping()
+    public String reportList(@AuthenticationPrincipal User user, Model model, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 2) Pageable pageable) throws NoSuchReportException {
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
 
         model.addAttribute("url", "/report");
 
+        logger.info(user + " got report list");
+
         return "report-list";
     }
 
-    @GetMapping("/report/{report}")
+    @GetMapping("/{report}")
     public String openReport(@AuthenticationPrincipal User user,
                              @PathVariable Report report,
                              Model model){
@@ -58,9 +79,9 @@ public class ReportController {
         return "report";
     }
 
-    @PostMapping("/report/individual-person-report")
+    @PostMapping("/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
-                                         IndividualPersonReportDTO reportDTO,
+                                         IndividualPersonReportDto reportDTO,
                                          Model model,
                                          @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
@@ -89,9 +110,9 @@ public class ReportController {
         }
     }
 
-    @PostMapping("/report/legal-entity-report")
+    @PostMapping("/legal-entity-report")
     public String legalEntityReport(@AuthenticationPrincipal User user,
-                                    LegalEntityReportDTO reportDTO,
+                                    LegalEntityReportDto reportDTO,
                                     Model model,
                                     @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException, NoSuchUserException {
 
@@ -118,6 +139,7 @@ public class ReportController {
         }
     }
 
+
     @PostMapping("/replace-inspector/{report}")
     public String replaceInspector(@PathVariable Report report) throws NoSuchUserException {
         List<User> replacedInspectors = report.getReplacedInspectors();
@@ -130,13 +152,13 @@ public class ReportController {
         return "redirect:/report";
     }
 
-    @GetMapping("/report/edit/{report}")
+    @GetMapping("/edit/{report}")
     public String editReportForm(@PathVariable Report report, Model model) {
         model.addAttribute("report", report);
         return "edit-report";
     }
 
-    @PostMapping("/report/edit/{report}")
+    @PostMapping("/edit/{report}")
     public String editReport(@PathVariable Report report, Report editedReport) {
 
         report.setFullName(editedReport.getFullName());

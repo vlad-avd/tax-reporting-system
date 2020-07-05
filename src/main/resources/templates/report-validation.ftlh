@@ -40,7 +40,7 @@
                 </tbody>
             </table>
         </div>
-        <form action="/check-report/${report.id}" method="post">
+        <form action="/verification-report/${report.id}" method="post">
             <div class="row container" style="margin-bottom: 20px">
                 <button class="btn btn-success" type="submit" name="reportStatus" value="approve"><@spring.message "messages.report.approve"/></button>
                 <button style="margin: 0px 50px" class="btn btn-danger" type="submit" name="reportStatus" value="reject"><@spring.message "messages.report.reject"/></button>

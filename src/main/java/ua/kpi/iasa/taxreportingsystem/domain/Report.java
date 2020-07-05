@@ -30,9 +30,6 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus;
 
-    @Enumerated(EnumType.STRING)
-    private RejectionReason rejectionReason;
-
     private String comment;
 
     private LocalDate created;

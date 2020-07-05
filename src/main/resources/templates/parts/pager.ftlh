@@ -1,4 +1,5 @@
 <#macro pager url page>
+    <#if page.numberOfElements != 0>
     <div>
         <ul class="pagination">
             <li class="page-item disabled">
@@ -17,4 +18,5 @@
             </#list>
         </ul>
     </div>
+    </#if>
 </#macro>
