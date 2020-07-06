@@ -19,15 +19,24 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 
+/**
+ * Class controller handles inspector actions with verification reports.
+ * (All verification-report/** mappings).
+ * @author Vladyslav Avdiienko
+ * @version 1.0
+ */
 @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_INSPECTOR')")
 @Controller
 @RequestMapping("/verification-report")
 public class VerificationReportController {
 
-    private final ReportService reportService;
-
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
+    private final ReportService reportService;
+
+    /** Constructor of the controller that initializes the services.
+     * @param reportService Service that processes a table with reports.
+     */
     @Autowired
     public VerificationReportController(ReportService reportService) {
         this.reportService = reportService;
@@ -39,6 +48,10 @@ public class VerificationReportController {
         return "redirect:/error";
     }
 
+    /** Returns list of all reports to be verified.
+     * @exception NoSuchReportException if report was not found.
+     * @return Name of the file representing list of verification reports.
+     */
     @GetMapping()
     public String unverifiedReports(@AuthenticationPrincipal User user,
                                     Model model,
@@ -52,6 +65,10 @@ public class VerificationReportController {
         return "verification-report-list";
     }
 
+    /** Return report data.
+     * @param report Report(id) to be opened.
+     * @return Name of the file representing the report verification page.
+     */
     @GetMapping("/{reportId}")
     public String openReportAsInspector(@PathVariable("reportId") Report report, Model model){
         model.addAttribute("report", report);
@@ -60,6 +77,13 @@ public class VerificationReportController {
         return "report-validation";
     }
 
+    /** Report verification. Set report status. Also rejection reason and comment if necessary.
+     * After acceptance or rejection, sending to the archive.
+     * @param report Report(id) to be verified.
+     * @param reportStatus Report status reason is indicated by the inspector.
+     * @param rejectionReason Rejection reason is indicated by the inspector.
+     * @param comment Comment is indicated by the inspector.
+     */
     @PostMapping("/{reportId}")
     public String checkReport(@PathVariable("reportId") Report report,
                               @AuthenticationPrincipal User user,

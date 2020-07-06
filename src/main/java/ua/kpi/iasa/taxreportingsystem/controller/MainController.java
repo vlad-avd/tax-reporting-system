@@ -11,53 +11,75 @@ import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
 import ua.kpi.iasa.taxreportingsystem.util.UserValidator;
 
+/**
+ * Class controller handles root, login and registration mappings.
+ * @author Vladyslav Avdiienko
+ * @version 1.0
+ */
 @Controller
 public class MainController {
 
-    private final UserService userService;
-
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
+    private final UserService userService;
+
+    /** Constructor of the controller that initializes the service.
+     * @param userService Service that processes a table with users.
+     */
     @Autowired
     public MainController(UserService userService) {
         this.userService = userService;
     }
 
+    /** Returns app main page.
+     * @return Name of the file representing the main page.
+     */
     @GetMapping("/")
     public String index(){
         return "index";
     }
 
+    /** Returns login page.
+     * @return Name of the file representing the login page.
+     */
     @GetMapping("/login")
     public String login(){
         return "login";
     }
 
+    /** Returns registration page.
+     * @return Name of the file representing the registration page.
+     */
     @GetMapping("/registration")
     public String registration(){
 
         return "registration";
     }
 
+    /** Creates a new user with a unique login.
+     * After successful registration, it redirects to the login page.
+     * @param userDto User login and password wrapped in the object.
+     * @see UserDto
+     */
     @PostMapping("/registration")
-    public String addUser(UserDto userDTO, Model model){
+    public String addUser(UserDto userDto, Model model){
 
         UserValidator userValidator = new UserValidator();
 
-        if(!userService.findByUsername(userDTO.getUsername()).isPresent()
-                && userValidator.isValidUsername(userDTO.getUsername())
-                && userValidator.isValidPassword(userDTO.getPassword())) {
+        if(!userService.findByUsername(userDto.getUsername()).isPresent()
+                && userValidator.isValidUsername(userDto.getUsername())
+                && userValidator.isValidPassword(userDto.getPassword())) {
 
-            userService.createUser(userDTO);
-            logger.info("User " + userDTO + " was created.");
+            userService.createUser(userDto);
+            logger.info("User " + userDto + " was created.");
 
             return "redirect:/login";
         }
 
-        model.addAttribute("isUserExist", userService.findByUsername(userDTO.getUsername()).isPresent());
-        model.addAttribute("isUsernameValid", userValidator.isValidUsername(userDTO.getUsername()));
-        model.addAttribute("isPasswordValid", userValidator.isValidPassword(userDTO.getPassword()));
+        model.addAttribute("isUserExist", userService.findByUsername(userDto.getUsername()).isPresent());
+        model.addAttribute("isUsernameValid", userValidator.isValidUsername(userDto.getUsername()));
+        model.addAttribute("isPasswordValid", userValidator.isValidPassword(userDto.getPassword()));
 
-        return "registration";
+        return "redirect:/login";
     }
 }

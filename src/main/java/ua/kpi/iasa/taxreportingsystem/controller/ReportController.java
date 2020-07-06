@@ -23,15 +23,24 @@ import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Class controller handles user actions with reports.(All report/** mappings).
+ * @author Vladyslav Avdiienko
+ * @version 1.0
+ */
 @Controller
 @RequestMapping("/report")
 public class ReportController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
     private final ReportService reportService;
     private final ArchiveService archiveService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
-
+    /** Constructor of the controller that initializes the services.
+     * @param reportService Service that processes a table with reports.
+     * @param archiveService Service that processes a table with archives.
+     */
     @Autowired
     public ReportController(ReportService reportService, ArchiveService archiveService) {
         this.reportService = reportService;
@@ -50,16 +59,25 @@ public class ReportController {
         return "redirect:/error";
     }
 
+    /** Returns page to create individual person report.
+     * @return Name of the file representing the individual person report page.
+     */
     @GetMapping("/individual-person-report")
     public String createIndividualPersonReport(){
         return "create-individual-person-report";
     }
 
+    /** Returns page to create legal entity report.
+     * @return Name of the file representing the legal entity report page.
+     */
     @GetMapping("/legal-entity-report")
     public String createLegalEntityReport(){
         return "create-legal-entity-report";
     }
 
+    /** Returns list of all reports submitted by the user.
+     * @return Name of the file representing the list of reports.
+     */
     @GetMapping()
     public String reportList(@AuthenticationPrincipal User user, Model model, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable));
@@ -70,10 +88,15 @@ public class ReportController {
         return "report-list";
     }
 
+    /** Returns report data.
+     * @param repId Report(id) to be open.
+     * @exception NoSuchReportException if report was not found
+     * @return Name of the file representing the report.
+     */
     @GetMapping("/{repId}")
     public String openReport(@AuthenticationPrincipal User user,
                              @PathVariable String repId,
-                             Model model) throws NoSuchReportException {
+                             Model model) {
 
         Long reportId = Long.parseLong(repId);
 
@@ -93,6 +116,11 @@ public class ReportController {
         return "report";
     }
 
+    /** Creates individual person report.
+     * @param report Report to be created.
+     * @exception NoSuchUserException if inspector with least reports number was not found
+     * @see Report
+     */
     @PostMapping("/individual-person-report")
     public String individualPersonReport(@AuthenticationPrincipal User user,
                                          Report report,
@@ -124,6 +152,11 @@ public class ReportController {
         }
     }
 
+    /** Creates legal entity report.
+     * @param report Report to be created.
+     * @exception NoSuchUserException if inspector with least reports number was not found
+     * @see Report
+     */
     @PostMapping("/legal-entity-report")
     public String legalEntityReport(@AuthenticationPrincipal User user,
                                     Report report,
@@ -153,7 +186,12 @@ public class ReportController {
         }
     }
 
-
+    /** Adds a current inspector to the list of replaced inspectors.
+     *  Sets up a new inspector, if possible.
+     * @param report Report which inspector will be replaced.
+     * @exception NoSuchUserException if inspector with least reports number was not found
+     * @see Report
+     */
     @PostMapping("/replace-inspector/{report}")
     public String replaceInspector(@PathVariable Report report) throws NoSuchUserException {
         List<User> replacedInspectors = report.getReplacedInspectors();
@@ -166,12 +204,21 @@ public class ReportController {
         return "redirect:/report";
     }
 
+    /** Returns page to edit report if possible.
+     * @param report Report(id) to be edited.
+     * @return Name of the file representing the report edit page.
+     */
     @GetMapping("/edit/{report}")
     public String editReportForm(@PathVariable Report report, Model model) {
         model.addAttribute("report", report);
         return "edit-report";
     }
 
+    /** Report editing, data updating.
+     * @param report Report(id) to be edited.
+     * @param editedReport New report data.
+     * @see Report
+     */
     @PostMapping("/edit/{report}")
     public String editReport(@PathVariable Report report, Report editedReport) {
         report.setFullName(editedReport.getFullName());
