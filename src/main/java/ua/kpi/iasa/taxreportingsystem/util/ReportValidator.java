@@ -3,7 +3,7 @@ package ua.kpi.iasa.taxreportingsystem.util;
 import java.util.ResourceBundle;
 
 public class ReportValidator {
-    private ResourceBundle regexpBundle;
+    private final ResourceBundle regexpBundle;
 
     {
         regexpBundle = ResourceBundle.getBundle("regex");

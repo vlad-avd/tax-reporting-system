@@ -16,7 +16,6 @@ import java.util.Optional;
 @Repository
 public interface ReportRepo extends JpaRepository<Report, Long> {
 
-    Optional<Page<Report>> findByTaxpayerId(Long id, Pageable pageable);
     List<Report> findByTaxpayerId(Long id);
 
     @Query(

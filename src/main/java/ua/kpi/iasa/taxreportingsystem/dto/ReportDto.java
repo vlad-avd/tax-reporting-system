@@ -9,28 +9,41 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public abstract class ReportDto {
-    protected Long id;
+public class ReportDto {
+    private Long id;
 
-    protected PersonType personType;
+    private PersonType personType;
 
-    protected ReportStatus reportStatus;
+    private ReportStatus reportStatus;
 
-    protected String comment;
+    private RejectionReason rejectionReason;
 
-    protected LocalDate created;
-    protected LocalDate lastEdit;
+    private String comment;
 
-    protected User taxpayer;
+    private LocalDate created;
+    private LocalDate lastEdit;
 
-    protected User inspector;
+    private User taxpayer;
 
-    protected User replacedInspector;
+    private User inspector;
+
+    private List<User> replacedInspectors;
+
+    //IndividualPersonReport
+    private String fullName;
+    private String workplace;
+    private BigDecimal salary;
+
+    //LegalEntityReport
+    private String companyName;
+    private BigDecimal financialTurnover;
 
 }

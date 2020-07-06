@@ -1,7 +1,7 @@
 <#macro pager url page>
     <#if page.numberOfElements != 0>
-    <div>
-        <ul class="pagination">
+    <div class="row d-flex justify-content-center">
+        <ul class="pagination col-md-3">
             <li class="page-item disabled">
                 <a class="page-link active" href="#" tabindex="-1">Pages</a>
             </li>

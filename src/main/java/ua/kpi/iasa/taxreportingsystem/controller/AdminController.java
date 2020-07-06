@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -41,8 +44,11 @@ public class AdminController {
     }
 
     @GetMapping("/user")
-    public String getUsers(Model model){
-        model.addAttribute("users", userService.getAllUsers());
+    public String getUsers(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable,
+                           Model model){
+        model.addAttribute("users", userService.getAllUsers(pageable));
+        model.addAttribute("url", "/user");
+
         logger.info("User: " + SecurityContextHolder.getContext().getAuthentication().getName() + " got user list.");
 
         return "user-list";
@@ -57,7 +63,8 @@ public class AdminController {
     }
 
     @PostMapping("/user/edit/{userId}")
-    public String saveEditedUser(@PathVariable("userId") User user,
+    public String saveEditedUser(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable,
+                                 @PathVariable("userId") User user,
                                  @RequestParam String username,
                                  @RequestParam String password,
                                  @RequestParam Map<String, String> rolesForm,
@@ -83,9 +90,9 @@ public class AdminController {
         userService.saveUser(user);
         logger.info("User: " + user + "data has been edited and saved by: " + SecurityContextHolder.getContext().getAuthentication().getName());
 
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.getAllUsers(pageable));
 
-        return "user-list";
+        return "redirect:/user";
     }
 
     @GetMapping("user/statistics/{userId}")

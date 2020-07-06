@@ -3,8 +3,8 @@
 <#import "parts/pager.ftlh" as p />
 
 <@c.page>
-    <div class="form-group mt-3 container">
-    <div class="row">
+    <div class="form-group container">
+    <div class="row d-flex justify-content-center" style="margin-bottom: 20px;">
         <form style="margin-right: 50px" class="col-md-4" action="/report/individual-person-report">
             <button class="btn btn-primary" type="submit"><@spring.message "messages.user.create.individual.person.report"/></button>
         </form>

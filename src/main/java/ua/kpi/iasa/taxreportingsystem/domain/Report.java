@@ -30,6 +30,9 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus;
 
+    @Enumerated(EnumType.STRING)
+    private RejectionReason rejectionReason;
+
     private String comment;
 
     private LocalDate created;
@@ -52,7 +55,7 @@ public class Report {
     private String companyName;
     private BigDecimal financialTurnover;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable (name="report_replaced_inspector",
             joinColumns=@JoinColumn (name="report_id"),
             inverseJoinColumns=@JoinColumn(name="inspector_id"))

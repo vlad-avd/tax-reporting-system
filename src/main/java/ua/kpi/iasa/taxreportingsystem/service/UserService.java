@@ -1,6 +1,8 @@
 package ua.kpi.iasa.taxreportingsystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +13,6 @@ import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,8 +32,8 @@ public class UserService implements UserDetailsService {
                                                                 "User with username: " + username + "is not found"));
     }
 
-    public List<User> getAllUsers(){
-        return userRepo.findAll();
+    public Page<User> getAllUsers(Pageable pageable){
+        return userRepo.findAll(pageable);
     }
 
     public Optional<User> findByUsername(String username){

@@ -13,19 +13,18 @@
         </tr>
         </thead>
         <tbody>
-        <#assign reportNumber = 1>
+        <#assign reportNumber = reports.getNumber() * reports.getSize() + 1>
         <#list reports.content as report>
             <tr>
-                <td>${reportNumber}</td>
+                <th scope="row">${reportNumber}</th>
                 <#assign reportNumber++>
                 <td>${report.personType}</td>
-                <td>${report.created}</td>
                 <td>${report.reportStatus}</td>
                 <td><a href="/verification-report/${report.id}"><@spring.message "messages.report.open"/></a></td>
             </tr>
         </#list>
         </tbody>
     </table>
-    <@p.pager url reports/>
     </div>
+    <@p.pager url reports/>
 </@c.page>

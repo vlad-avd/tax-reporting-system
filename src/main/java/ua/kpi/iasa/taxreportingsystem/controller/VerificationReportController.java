@@ -66,7 +66,7 @@ public class VerificationReportController {
                               @RequestParam String reportStatus,
                               @RequestParam(required = false) String rejectionReason,
                               @RequestParam(required = false) String comment,
-                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 4) Pageable pageable,
+                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable,
                               Model model){
 
         if(!rejectionReason.isEmpty()) {

@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 
 public class UserValidator {
 
-    private ResourceBundle regexpBundle;
+    private final ResourceBundle regexpBundle;
 
     {
         regexpBundle = ResourceBundle.getBundle("regex");

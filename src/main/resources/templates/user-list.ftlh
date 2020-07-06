@@ -1,5 +1,6 @@
 <#import "parts/template.ftlh" as c>
 <#import "/spring.ftl" as spring/>
+<#import "parts/pager.ftlh" as p/>
 <@c.page>
 <div class="form-group mt-3 container">
     <table class="table table-striped">
@@ -11,9 +12,11 @@
             </tr>
         </thead>
         <tbody>
-        <#list users as user>
+        <#assign userNumber = users.getNumber() * users.getSize() + 1>
+        <#list users.content as user>
             <tr>
-                <td>1</td>
+                <th scope="row">${userNumber}</th>
+                <#assign userNumber++>
                 <td>${user.username}</td>
                 <td><#list user.roles as role>${role}<#sep>, </#list></td>
                 <td><a href="/user/edit/${user.id}"><@spring.message "messages.user.edit"/></a></td>
@@ -23,4 +26,5 @@
         </tbody>
     </table>
 </div>
+    <@p.pager url users/>
 </@c.page>
