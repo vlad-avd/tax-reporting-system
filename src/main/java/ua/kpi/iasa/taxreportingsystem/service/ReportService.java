@@ -49,16 +49,16 @@ public class ReportService {
     public Page<Report> getUserSubmittedReports(Long id, Pageable pageable){
         List<Report> reports = reportRepo.findByTaxpayerId(id);
         List<Archive> archivedReports = archiveRepo.findByTaxpayerId(id);
+
         reports.addAll(archivedReports
-                .stream()
-                .map(ArchiveReportConverter::archiveToReport)
-                .collect(Collectors.toList()));
-        return new PageImpl<>(
-                reports.subList(pageable
-                        .getPageNumber()*pageable.getPageSize(),
-                        Math.min((pageable.getPageNumber() + 1) * pageable.getPageSize(), reports.size())),
-                pageable,
-                reports.size());
+                        .stream()
+                        .map(ArchiveReportConverter::archiveToReport)
+                        .collect(Collectors.toList()));
+
+        return new PageImpl<>(reports.subList(pageable.getPageNumber()*pageable.getPageSize(),
+                                        Math.min((pageable.getPageNumber() + 1) * pageable.getPageSize(), reports.size())),
+                                    pageable,
+                                    reports.size());
     }
 
     public void saveReport(Report report){
@@ -201,5 +201,17 @@ public class ReportService {
                 .approvedReportsNumber(approvedReportsNumber)
                 .rejectedReportsNumber(rejectedReportsNumber)
                 .build();
+    }
+
+    public void editReport(Report report,Report editedReport) {
+        report.setFullName(editedReport.getFullName());
+        report.setWorkplace(editedReport.getWorkplace());
+        report.setSalary(editedReport.getSalary());
+        report.setCompanyName(editedReport.getCompanyName());
+        report.setFinancialTurnover(editedReport.getFinancialTurnover());
+        report.setLastEdit(LocalDate.now());
+        report.setReportStatus(ReportStatus.ON_VERIFYING);
+
+        saveReport(editedReport);
     }
 }

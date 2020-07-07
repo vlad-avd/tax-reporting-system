@@ -66,19 +66,20 @@ public class MainController {
 
         UserValidator userValidator = new UserValidator();
 
-        if(!userService.findByUsername(userDto.getUsername()).isPresent()
-                && userValidator.isValidUsername(userDto.getUsername())
-                && userValidator.isValidPassword(userDto.getPassword())) {
+        boolean isUserExist = userService.findByUsername(userDto.getUsername()).isPresent();
+        boolean isUsernameValid = userValidator.isValidUsername(userDto.getUsername());
+        boolean isPasswordValid = userValidator.isValidPassword(userDto.getPassword());
 
+        if(!isUserExist && isUsernameValid && isPasswordValid) {
             userService.createUser(userDto);
             logger.info("User " + userDto + " was created.");
 
             return "redirect:/login";
         }
 
-        model.addAttribute("isUserExist", userService.findByUsername(userDto.getUsername()).isPresent());
-        model.addAttribute("isUsernameValid", userValidator.isValidUsername(userDto.getUsername()));
-        model.addAttribute("isPasswordValid", userValidator.isValidPassword(userDto.getPassword()));
+        model.addAttribute("isUserExist", isUserExist);
+        model.addAttribute("isUsernameValid", isUsernameValid);
+        model.addAttribute("isPasswordValid", isPasswordValid);
 
         return "redirect:/login";
     }

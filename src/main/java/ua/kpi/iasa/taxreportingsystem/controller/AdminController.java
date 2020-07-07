@@ -90,8 +90,6 @@ public class AdminController {
                                  @RequestParam String password,
                                  @RequestParam Map<String, String> rolesForm,
                                  Model model){
-        model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
 
         user.setUsername(username);
         user.setPassword(password);
@@ -109,6 +107,7 @@ public class AdminController {
         }
 
         userService.saveUser(user);
+
         logger.info("User: " + user + "data has been edited and saved by: " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         model.addAttribute("users", userService.getAllUsers(pageable));
@@ -126,6 +125,7 @@ public class AdminController {
                                 Model model) {
 
         StatisticsDto statistics = reportService.getStatistics(user.getId());
+
         logger.info("User " + user + "statistics for reports were created");
 
         model.addAttribute("user", user);

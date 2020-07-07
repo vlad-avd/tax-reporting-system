@@ -28,8 +28,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo.findByUsername(username)
-                                                .orElseThrow(() -> new UsernameNotFoundException(
-                                                                "User with username: " + username + "is not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + "is not found"));
     }
 
     public Page<User> getAllUsers(Pageable pageable){

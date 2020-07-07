@@ -20,8 +20,8 @@ import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.util.ArchiveReportConverter;
 import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class controller handles user actions with reports.(All report/** mappings).
@@ -96,20 +96,29 @@ public class ReportController {
     @GetMapping("/{repId}")
     public String openReport(@AuthenticationPrincipal User user,
                              @PathVariable String repId,
-                             Model model) {
+                             Model model) throws NoSuchReportException {
 
         Long reportId = Long.parseLong(repId);
 
-        Report report = reportService.findReportById(reportId)
-                .orElseGet( () -> {
-                    try {
-                        return ArchiveReportConverter.archiveToReport(
-                                        archiveService.findReportById(reportId)
-                                                .orElseThrow(() -> new NoSuchReportException("Report was not found")));
-                    } catch (NoSuchReportException exception) {
-                        return new Report();
-                    }
-                });
+        Optional<Report> findReportResult = reportService.findReportById(reportId);
+        Report report = findReportResult.isPresent()
+                ? findReportResult.get()
+                : ArchiveReportConverter.archiveToReport(
+                        archiveService.findReportById(reportId)
+                        .orElseThrow(() -> new NoSuchReportException("Report was not found")));
+
+        //Old request version
+//        Report report = reportService.findReportById(reportId)
+//                .orElseGet(() -> {
+//                    try {
+//                        return ArchiveReportConverter.archiveToReport(
+//                                                archiveService.findReportById(reportId)
+//                                                        .orElseThrow(() -> new NoSuchReportException("Report was not found")));
+//                    } catch (NoSuchReportException exception) {
+//                        exception.printStackTrace();
+//                    }
+//                });
+
         model.addAttribute("report", report);
         model.addAttribute("userId", user.getId());
         model.addAttribute("replaceInspector", reportService.isPossiblyToReplaceInspector(report.getId()));
@@ -129,10 +138,11 @@ public class ReportController {
 
         ReportValidator reportValidator = new ReportValidator();
 
-        if(reportValidator.isFullNameValid(report.getFullName())
-                && reportValidator.isWorkplaceValid(report.getWorkplace())
-                && reportValidator.isSalaryValid(String.valueOf(report.getSalary()))) {
+        boolean isFullNameValid = reportValidator.isFullNameValid(report.getFullName());
+        boolean isWorkplaceValid = reportValidator.isWorkplaceValid(report.getWorkplace());
+        boolean isSalaryValid = reportValidator.isSalaryValid(String.valueOf(report.getSalary()));
 
+        if(isFullNameValid && isWorkplaceValid && isSalaryValid) {
             report.setTaxpayer(user);
             report.setInspector(reportService.getInspectorIdWithLeastReportsNumber(report.getId(), true));
 
@@ -144,9 +154,9 @@ public class ReportController {
         }
 
         else {
-            model.addAttribute("isFullNameValid", reportValidator.isFullNameValid(report.getFullName()));
-            model.addAttribute("isWorkplaceValid", reportValidator.isWorkplaceValid(report.getWorkplace()));
-            model.addAttribute("isSalaryValid", reportValidator.isSalaryValid(String.valueOf(report.getSalary())));
+            model.addAttribute("isFullNameValid", isFullNameValid);
+            model.addAttribute("isWorkplaceValid", isWorkplaceValid);
+            model.addAttribute("isSalaryValid", isSalaryValid);
 
             return "create-individual-person-report";
         }
@@ -165,9 +175,10 @@ public class ReportController {
 
         ReportValidator reportValidator = new ReportValidator();
 
-        if(reportValidator.isWorkplaceValid(report.getCompanyName())
-                && reportValidator.isSalaryValid(String.valueOf(report.getFinancialTurnover()))) {
+        boolean isCompanyNameValid = reportValidator.isWorkplaceValid(report.getWorkplace());
+        boolean isFinancialTurnoverValid = reportValidator.isSalaryValid(String.valueOf(report.getSalary()));
 
+        if(isCompanyNameValid && isFinancialTurnoverValid) {
             report.setTaxpayer(user);
             report.setInspector(reportService.getInspectorIdWithLeastReportsNumber(report.getId(), true));
 
@@ -179,8 +190,8 @@ public class ReportController {
         }
 
         else {
-            model.addAttribute("isCompanyNameValid", reportValidator.isWorkplaceValid(report.getCompanyName()));
-            model.addAttribute("isFinancialTurnoverValid", reportValidator.isSalaryValid(String.valueOf(report.getFinancialTurnover())));
+            model.addAttribute("isCompanyNameValid", isCompanyNameValid);
+            model.addAttribute("isFinancialTurnoverValid", isFinancialTurnoverValid);
 
             return "create-legal-entity-report";
         }
@@ -196,9 +207,11 @@ public class ReportController {
     public String replaceInspector(@PathVariable Report report) throws NoSuchUserException {
         List<User> replacedInspectors = report.getReplacedInspectors();
         replacedInspectors.add(report.getInspector());
+
         report.setReplacedInspectors(replacedInspectors);
         report.setReportStatus(ReportStatus.ON_VERIFYING);
         report.setInspector(reportService.getInspectorIdWithLeastReportsNumber(report.getId(), false));
+
         reportService.saveReport(report);
 
         return "redirect:/report";
@@ -221,14 +234,7 @@ public class ReportController {
      */
     @PostMapping("/edit/{report}")
     public String editReport(@PathVariable Report report, Report editedReport) {
-        report.setFullName(editedReport.getFullName());
-        report.setWorkplace(editedReport.getWorkplace());
-        report.setSalary(editedReport.getSalary());
-        report.setCompanyName(editedReport.getCompanyName());
-        report.setFinancialTurnover(editedReport.getFinancialTurnover());
-        report.setLastEdit(LocalDate.now());
-        report.setReportStatus(ReportStatus.ON_VERIFYING);
-        reportService.saveReport(editedReport);
+        reportService.editReport(report, editedReport);
         return "redirect:/report";
     }
 }

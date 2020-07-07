@@ -18,9 +18,9 @@ import ua.kpi.iasa.taxreportingsystem.service.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
-
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
+    private final UserService userService;
 
     @Autowired
     public WebSecurityConfig(UserService userService) {

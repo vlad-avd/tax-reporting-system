@@ -54,10 +54,13 @@ public class VerificationReportController {
      */
     @GetMapping()
     public String unverifiedReports(@AuthenticationPrincipal User user,
-                                    Model model,
-                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchReportException {
+                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable,
+                                    Model model) throws NoSuchReportException {
 
-        model.addAttribute("reports", reportService.getVerificationReports(user.getId(), pageable).orElseThrow(() -> new NoSuchReportException("Reports were not found")));
+        model.addAttribute("reports",
+                reportService.getVerificationReports(user.getId(), pageable)
+                            .orElseThrow(() -> new NoSuchReportException("Reports were not found")));
+
         model.addAttribute("url", "/verification-report");
 
         logger.info("User: " + SecurityContextHolder.getContext().getAuthentication().getName() + " got verification reports.");

@@ -27,7 +27,9 @@ public class TaxSystemErrorController implements ErrorController {
      */
     @RequestMapping("/denied")
     public String handleDeniedError() {
-        logger.info("User: " + SecurityContextHolder.getContext().getAuthentication().getName() + " attempted to access the protected URL.");
+        logger.info("User: "
+                + SecurityContextHolder.getContext().getAuthentication().getName()
+                + " attempted to access the protected URL.");
         return "error-403";
     }
 
