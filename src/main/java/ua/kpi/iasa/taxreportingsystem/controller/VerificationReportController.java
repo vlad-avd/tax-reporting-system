@@ -53,7 +53,7 @@ public class VerificationReportController {
      * @return Name of the file representing list of verification reports.
      */
     @GetMapping()
-    public String unverifiedReports(@AuthenticationPrincipal User user,
+    public String getReportListToVerify(@AuthenticationPrincipal User user,
                                     @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable,
                                     Model model) throws NoSuchReportException {
 
@@ -73,7 +73,7 @@ public class VerificationReportController {
      * @return Name of the file representing the report verification page.
      */
     @GetMapping("/{reportId}")
-    public String openReportAsInspector(@PathVariable("reportId") Report report, Model model){
+    public String getReportToVerify(@PathVariable("reportId") Report report, Model model){
         model.addAttribute("report", report);
         model.addAttribute("rejectionReasons", RejectionReason.values());
 
@@ -88,7 +88,7 @@ public class VerificationReportController {
      * @param comment Comment is indicated by the inspector.
      */
     @PostMapping("/{reportId}")
-    public String checkReport(@PathVariable("reportId") Report report,
+    public String verifyReport(@PathVariable("reportId") Report report,
                               @AuthenticationPrincipal User user,
                               @RequestParam String reportStatus,
                               @RequestParam(required = false) String rejectionReason,
@@ -102,22 +102,11 @@ public class VerificationReportController {
         if(!comment.isEmpty()) {
             report.setComment(comment);
         }
-        if(reportStatus.equals("approve") ){
-            report.setReportStatus(ReportStatus.APPROVED);
-            reportService.moveReportToArchive(report);
-            logger.debug("Report: " + report + " sent to archive.");
-        }
-        else if(reportStatus.equals("reject") ){
-            report.setReportStatus(ReportStatus.REJECTED);
-            reportService.moveReportToArchive(report);
-            logger.debug("Report: " + report + " sent to archive.");
-        }
-        else if(reportStatus.equals("sendToEdit")){
-            report.setReportStatus(ReportStatus.NEED_TO_EDIT);
-            reportService.saveReport(report);
-            logger.debug("Report: " + report + " has been updated by " + user);
-        }
+
+        reportService.verifyReport(report, reportStatus);
+
         model.addAttribute("reports", reportService.getVerificationReports(user.getId(), pageable));
+        logger.debug("Report has been verified by " + user + " with status" + reportStatus);
 
         return "redirect:/verification-report";
     }

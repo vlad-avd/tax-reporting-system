@@ -11,17 +11,20 @@ import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
+import ua.kpi.iasa.taxreportingsystem.dto.ReportValidationResultDto;
 import ua.kpi.iasa.taxreportingsystem.dto.StatisticsDto;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.repos.ArchiveRepo;
 import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 import ua.kpi.iasa.taxreportingsystem.util.ArchiveReportConverter;
+import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,33 +68,63 @@ public class ReportService {
         reportRepo.save(report);
     }
 
-    public void createIndividualPersonReport(Report report){
-        reportRepo.save(Report.builder()
-                .fullName(report.getFullName())
-                .workplace(report.getWorkplace())
-                .salary(report.getSalary())
-                .personType(PersonType.INDIVIDUAL)
-                .reportStatus(ReportStatus.ON_VERIFYING)
-                .created(report.getCreated())
-                .lastEdit(report.getLastEdit())
-                .taxpayer(report.getTaxpayer())
-                .inspector(report.getInspector())
-                .created(LocalDate.now())
-                .build());
+    public ReportValidationResultDto createIndividualPersonReport(Report report, User user) throws NoSuchUserException {
+        ReportValidator reportValidator = new ReportValidator();
+
+        boolean isFullNameValid = reportValidator.isFullNameValid(report.getFullName());
+        boolean isWorkplaceValid = reportValidator.isWorkplaceValid(report.getWorkplace());
+        boolean isSalaryValid = reportValidator.isSalaryValid(String.valueOf(report.getSalary()));
+
+        if(isFullNameValid && isWorkplaceValid && isSalaryValid) {
+            report.setTaxpayer(user);
+            report.setInspector(getInspectorIdWithLeastReportsNumber(report.getId(), true));
+
+            saveReport(Report.builder()
+                    .fullName(report.getFullName())
+                    .workplace(report.getWorkplace())
+                    .salary(report.getSalary())
+                    .personType(PersonType.INDIVIDUAL)
+                    .reportStatus(ReportStatus.ON_VERIFYING)
+                    .created(report.getCreated())
+                    .lastEdit(report.getLastEdit())
+                    .taxpayer(report.getTaxpayer())
+                    .inspector(report.getInspector())
+                    .created(LocalDate.now())
+                    .build());
+        }
+            return ReportValidationResultDto.builder()
+                    .isFullNameValid(isFullNameValid)
+                    .isWorkplaceValid(isWorkplaceValid)
+                    .isSalaryValid(isSalaryValid)
+                    .build();
     }
 
-    public void createLegalEntityReport(Report report){
-        reportRepo.save(Report.builder()
-                .companyName(report.getCompanyName())
-                .financialTurnover(report.getFinancialTurnover())
-                .personType(PersonType.ENTITY)
-                .reportStatus(ReportStatus.ON_VERIFYING)
-                .lastEdit(report.getLastEdit())
-                .taxpayer(report.getTaxpayer())
-                .taxpayer(report.getTaxpayer())
-                .inspector(report.getInspector())
-                .created(LocalDate.now())
-                .build());
+    public ReportValidationResultDto createLegalEntityReport(Report report, User user) throws NoSuchUserException {
+        ReportValidator reportValidator = new ReportValidator();
+
+        boolean isCompanyNameValid = reportValidator.isWorkplaceValid(report.getCompanyName());
+        boolean isFinancialTurnoverValid = reportValidator.isSalaryValid(String.valueOf(report.getFinancialTurnover()));
+
+        if(isCompanyNameValid && isFinancialTurnoverValid) {
+            report.setTaxpayer(user);
+            report.setInspector(getInspectorIdWithLeastReportsNumber(report.getId(), true));
+
+            reportRepo.save(Report.builder()
+                    .companyName(report.getCompanyName())
+                    .financialTurnover(report.getFinancialTurnover())
+                    .personType(PersonType.ENTITY)
+                    .reportStatus(ReportStatus.ON_VERIFYING)
+                    .lastEdit(report.getLastEdit())
+                    .taxpayer(report.getTaxpayer())
+                    .taxpayer(report.getTaxpayer())
+                    .inspector(report.getInspector())
+                    .created(LocalDate.now())
+                    .build());
+        }
+        return ReportValidationResultDto.builder()
+                .isCompanyNameValid(isCompanyNameValid)
+                .isFinancialTurnoverValid(isFinancialTurnoverValid)
+                .build();
     }
 
     public User getInspectorIdWithLeastReportsNumber(Long reportId, boolean createReport) throws NoSuchUserException {
@@ -145,7 +178,6 @@ public class ReportService {
     public void moveReportToArchive(Report report) {
         reportRepo.deleteReplacedInspectors(report.getId());
         reportRepo.delete(report);
-        System.out.println(report);
         archiveRepo.save(reportToArchive(report));
     }
 
@@ -213,5 +245,31 @@ public class ReportService {
         report.setReportStatus(ReportStatus.ON_VERIFYING);
 
         saveReport(editedReport);
+    }
+
+    public void replaceInspector(Report report) throws NoSuchUserException {
+        List<User> replacedInspectors = report.getReplacedInspectors();
+        replacedInspectors.add(report.getInspector());
+
+        report.setReplacedInspectors(replacedInspectors);
+        report.setReportStatus(ReportStatus.ON_VERIFYING);
+        report.setInspector(getInspectorIdWithLeastReportsNumber(report.getId(), false));
+
+        saveReport(report);
+    }
+
+    public void verifyReport(Report report, String reportStatus) {
+        if(reportStatus.equals("approve") ){
+            report.setReportStatus(ReportStatus.APPROVED);
+            moveReportToArchive(report);
+        }
+        else if(reportStatus.equals("reject") ){
+            report.setReportStatus(ReportStatus.REJECTED);
+            moveReportToArchive(report);
+        }
+        else if(reportStatus.equals("sendToEdit")){
+            report.setReportStatus(ReportStatus.NEED_TO_EDIT);
+            saveReport(report);
+        }
     }
 }

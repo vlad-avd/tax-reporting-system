@@ -32,7 +32,7 @@ public class UserController {
      * @return Name of the file representing the user profile page.
      */
     @GetMapping("/profile")
-    public String userProfile(@AuthenticationPrincipal User user, Model model){
+    public String getProfile(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("user", userService.loadUserByUsername(user.getUsername()));
 
         return "profile";

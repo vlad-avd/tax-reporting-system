@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 import ua.kpi.iasa.taxreportingsystem.dto.StatisticsDto;
+import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
 
@@ -91,22 +92,14 @@ public class AdminController {
                                  @RequestParam Map<String, String> rolesForm,
                                  Model model){
 
-        user.setUsername(username);
-        user.setPassword(password);
+        UserDto editedUser = UserDto.builder()
+                .id(user.getId())
+                .username(username)
+                .password(password)
+                .roleCheckboxFlag(rolesForm)
+                .build();
 
-        Set<String> roles = Arrays.stream(Role.values())
-                .map(Role::name)
-                .collect(Collectors.toSet());
-
-        user.getRoles().clear();
-
-        for (String key : rolesForm.keySet()) {
-            if(roles.contains(key)){
-                user.getRoles().add(Role.valueOf(key));
-            }
-        }
-
-        userService.saveUser(user);
+        userService.editUser(editedUser);
 
         logger.info("User: " + user + "data has been edited and saved by: " + SecurityContextHolder.getContext().getAuthentication().getName());
 

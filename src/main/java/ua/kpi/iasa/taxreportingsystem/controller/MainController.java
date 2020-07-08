@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
 import ua.kpi.iasa.taxreportingsystem.util.UserValidator;
@@ -58,21 +59,21 @@ public class MainController {
 
     /** Creates a new user with a unique login.
      * After successful registration, it redirects to the login page.
-     * @param userDto User login and password wrapped in the object.
+     * @param user User login and password wrapped in the object.
      * @see UserDto
      */
     @PostMapping("/registration")
-    public String addUser(UserDto userDto, Model model){
+    public String addUser(User user, Model model){
 
         UserValidator userValidator = new UserValidator();
 
-        boolean isUserExist = userService.findByUsername(userDto.getUsername()).isPresent();
-        boolean isUsernameValid = userValidator.isValidUsername(userDto.getUsername());
-        boolean isPasswordValid = userValidator.isValidPassword(userDto.getPassword());
+        boolean isUserExist = userService.findByUsername(user.getUsername()).isPresent();
+        boolean isUsernameValid = userValidator.isValidUsername(user.getUsername());
+        boolean isPasswordValid = userValidator.isValidPassword(user.getPassword());
 
         if(!isUserExist && isUsernameValid && isPasswordValid) {
-            userService.createUser(userDto);
-            logger.info("User " + userDto + " was created.");
+            userService.createUser(user);
+            logger.info("User " + user + " was created.");
 
             return "redirect:/login";
         }

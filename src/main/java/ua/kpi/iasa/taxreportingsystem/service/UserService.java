@@ -12,8 +12,11 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -43,11 +46,31 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
     }
 
-    public void createUser(UserDto userDTO){
+    public void createUser(User user){
         userRepo.save(User.builder()
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
+                .username(user.getUsername())
+                .password(user.getPassword())
                 .roles(Collections.singleton(Role.ROLE_USER))
                 .active(true).build());
+    }
+
+    public void editUser(UserDto editedUser) {
+
+        User user = User.builder()
+                .id(editedUser.getId())
+                .password(editedUser.getPassword())
+                .active(true)
+                .build();
+
+        Set<String> roles = Arrays.stream(Role.values())
+                .map(Role::name)
+                .collect(Collectors.toSet());
+
+        for (String key : editedUser.getRoleCheckboxFlag().keySet()) {
+            if (roles.contains(key)) {
+                user.getRoles().add(Role.valueOf(key));
+            }
+        }
+        saveUser(user);
     }
 }

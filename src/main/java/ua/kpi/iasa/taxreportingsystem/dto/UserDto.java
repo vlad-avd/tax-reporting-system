@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -18,6 +19,5 @@ public class UserDto {
     private String username;
     private String password;
 
-    private boolean active;
-    private Set<Role> roles;
+    private Map<String, String> roleCheckboxFlag;
 }
