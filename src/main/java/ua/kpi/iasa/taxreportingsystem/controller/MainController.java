@@ -53,7 +53,6 @@ public class MainController {
      */
     @GetMapping("/registration")
     public String registration(){
-
         return "registration";
     }
 
@@ -76,12 +75,13 @@ public class MainController {
             logger.info("User " + user + " was created.");
 
             return "redirect:/login";
+        } else {
+
+            model.addAttribute("isUserExist", isUserExist);
+            model.addAttribute("isUsernameValid", isUsernameValid);
+            model.addAttribute("isPasswordValid", isPasswordValid);
+
+            return "registration";
         }
-
-        model.addAttribute("isUserExist", isUserExist);
-        model.addAttribute("isUsernameValid", isUsernameValid);
-        model.addAttribute("isPasswordValid", isPasswordValid);
-
-        return "redirect:/login";
     }
 }

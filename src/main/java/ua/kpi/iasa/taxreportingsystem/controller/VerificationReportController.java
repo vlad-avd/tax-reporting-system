@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.RejectionReason;
-import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 

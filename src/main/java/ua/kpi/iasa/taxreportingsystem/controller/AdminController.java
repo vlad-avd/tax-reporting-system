@@ -21,11 +21,9 @@ import ua.kpi.iasa.taxreportingsystem.dto.StatisticsDto;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.service.UserService;
+import ua.kpi.iasa.taxreportingsystem.util.UserValidator;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Class controller handles mappings available to the administrator.
@@ -92,20 +90,29 @@ public class AdminController {
                                  @RequestParam Map<String, String> rolesForm,
                                  Model model){
 
-        UserDto editedUser = UserDto.builder()
-                .id(user.getId())
-                .username(username)
-                .password(password)
-                .roleCheckboxFlag(rolesForm)
-                .build();
+        UserValidator userValidator = new UserValidator();
 
-        userService.editUser(editedUser);
+        boolean isUsernameValid = userValidator.isValidUsername(username);
+        boolean isPasswordValid = userValidator.isValidPassword(password);
 
-        logger.info("User: " + user + "data has been edited and saved by: " + SecurityContextHolder.getContext().getAuthentication().getName());
+        if(isUsernameValid && isPasswordValid) {
+            UserDto editedUser = UserDto.builder()
+                    //.id(user.getId())
+                    .username(username)
+                    .password(password)
+                    .roleCheckboxFlag(rolesForm)
+                    .build();
 
-        model.addAttribute("users", userService.getAllUsers(pageable));
+            userService.editUser(user, editedUser);
 
-        return "redirect:/user";
+            logger.info("User: " + user + "data has been edited and saved by: " + SecurityContextHolder.getContext().getAuthentication().getName());
+
+            model.addAttribute("users", userService.getAllUsers(pageable));
+
+            return "redirect:/user";
+        } else {
+            return "incorrect-data";
+        }
     }
 
     /** Counts user statistics for reports submitted by him

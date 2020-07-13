@@ -22,4 +22,23 @@ public class ArchiveReportConverter {
                 .reportStatus(archive.getReportStatus())
                 .build();
     }
+
+    public static Archive reportToArchive(Report report) {
+        return Archive.builder()
+                .id(report.getId())
+                .companyName(report.getCompanyName())
+                .financialTurnover(report.getFinancialTurnover())
+                .created(report.getCreated())
+                .lastEdit(report.getLastEdit())
+                .fullName(report.getFullName())
+                .workplace(report.getWorkplace())
+                .salary(report.getSalary())
+                .taxpayer(report.getTaxpayer())
+                .inspector(report.getInspector())
+                .personType(report.getPersonType())
+                .rejectionReason(report.getRejectionReason())
+                .comment(report.getComment())
+                .reportStatus(report.getReportStatus())
+                .build();
+    }
 }

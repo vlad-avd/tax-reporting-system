@@ -13,6 +13,7 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.domain.enums.ReportStatus;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportValidationResultDto;
 import ua.kpi.iasa.taxreportingsystem.dto.StatisticsDto;
+import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.repos.ArchiveRepo;
 import ua.kpi.iasa.taxreportingsystem.repos.ReportRepo;
@@ -24,7 +25,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,10 +53,13 @@ public class ReportService {
         List<Report> reports = reportRepo.findByTaxpayerId(id);
         List<Archive> archivedReports = archiveRepo.findByTaxpayerId(id);
 
-        reports.addAll(archivedReports
-                        .stream()
+        reports.addAll(archivedReports.stream()
                         .map(ArchiveReportConverter::archiveToReport)
                         .collect(Collectors.toList()));
+
+        reports = reports.stream()
+                        .sorted(Comparator.comparing(Report::getId).reversed())
+                        .collect(Collectors.toList());
 
         return new PageImpl<>(reports.subList(pageable.getPageNumber()*pageable.getPageSize(),
                                         Math.min((pageable.getPageNumber() + 1) * pageable.getPageSize(), reports.size())),
@@ -68,7 +71,7 @@ public class ReportService {
         reportRepo.save(report);
     }
 
-    public ReportValidationResultDto createIndividualPersonReport(Report report, User user) throws NoSuchUserException {
+    public ReportValidationResultDto createIndividualPersonReport(Report report, User user) throws NoSuchUserException, NoSuchReportException {
         ReportValidator reportValidator = new ReportValidator();
 
         boolean isFullNameValid = reportValidator.isFullNameValid(report.getFullName());
@@ -99,7 +102,7 @@ public class ReportService {
                     .build();
     }
 
-    public ReportValidationResultDto createLegalEntityReport(Report report, User user) throws NoSuchUserException {
+    public ReportValidationResultDto createLegalEntityReport(Report report, User user) throws NoSuchUserException, NoSuchReportException {
         ReportValidator reportValidator = new ReportValidator();
 
         boolean isCompanyNameValid = reportValidator.isWorkplaceValid(report.getCompanyName());
@@ -127,13 +130,18 @@ public class ReportService {
                 .build();
     }
 
-    public User getInspectorIdWithLeastReportsNumber(Long reportId, boolean createReport) throws NoSuchUserException {
+    public User getInspectorIdWithLeastReportsNumber(Long reportId, boolean createReport) throws NoSuchUserException, NoSuchReportException {
         List<Long> inspectors = reportRepo.getAllInspectorIds();
         List<Long> inspectorIdsInReports = reportRepo.getAllInspectorIdsFromReports();
 
         if (!createReport) {
             List<Long> replacedInspectors = reportRepo.getReplacedInspectorsByReportId(reportId);
             inspectors.removeAll(replacedInspectors);
+            inspectors.remove(reportRepo
+                            .findById(reportId)
+                            .orElseThrow(() -> new NoSuchReportException("Report: " + reportId + " was not found"))
+                            .getInspector()
+                            .getId());
             inspectorIdsInReports.removeAll(replacedInspectors);
         }
 
@@ -155,30 +163,11 @@ public class ReportService {
         return userRepo.findById(inspectorWithLeastReportsNumber).orElseThrow(() -> new NoSuchUserException("User with id = " + inspectorIdsInReports + " was not found"));
     }
 
-    public Archive reportToArchive(Report report) {
-        return Archive.builder()
-                .id(report.getId())
-                .companyName(report.getCompanyName())
-                .financialTurnover(report.getFinancialTurnover())
-                .created(report.getCreated())
-                .lastEdit(report.getLastEdit())
-                .fullName(report.getFullName())
-                .workplace(report.getWorkplace())
-                .salary(report.getSalary())
-                .taxpayer(report.getTaxpayer())
-                .inspector(report.getInspector())
-                .personType(report.getPersonType())
-                .rejectionReason(report.getRejectionReason())
-                .comment(report.getComment())
-                .reportStatus(report.getReportStatus())
-                .build();
-    }
-
     @Transactional
     public void moveReportToArchive(Report report) {
         reportRepo.deleteReplacedInspectors(report.getId());
         reportRepo.delete(report);
-        archiveRepo.save(reportToArchive(report));
+        archiveRepo.save(ArchiveReportConverter.reportToArchive(report));
     }
 
     public boolean isPossiblyToReplaceInspector(Long reportId) {
@@ -235,7 +224,7 @@ public class ReportService {
                 .build();
     }
 
-    public void editReport(Report report,Report editedReport) {
+    public void editReport(Report report, Report editedReport) {
         report.setFullName(editedReport.getFullName());
         report.setWorkplace(editedReport.getWorkplace());
         report.setSalary(editedReport.getSalary());
@@ -247,7 +236,7 @@ public class ReportService {
         saveReport(editedReport);
     }
 
-    public void replaceInspector(Report report) throws NoSuchUserException {
+    public void replaceInspector(Report report) throws NoSuchUserException, NoSuchReportException {
         List<User> replacedInspectors = report.getReplacedInspectors();
         replacedInspectors.add(report.getInspector());
 

@@ -12,10 +12,7 @@ import ua.kpi.iasa.taxreportingsystem.domain.enums.Role;
 import ua.kpi.iasa.taxreportingsystem.dto.UserDto;
 import ua.kpi.iasa.taxreportingsystem.repos.UserRepo;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,16 +48,15 @@ public class UserService implements UserDetailsService {
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .roles(Collections.singleton(Role.ROLE_USER))
-                .active(true).build());
+                .active(true)
+                .build());
     }
 
-    public void editUser(UserDto editedUser) {
+    public void editUser(User user, UserDto editedUser) {
 
-        User user = User.builder()
-                .id(editedUser.getId())
-                .password(editedUser.getPassword())
-                .active(true)
-                .build();
+        user.setUsername(editedUser.getUsername());
+        user.setPassword(editedUser.getPassword());
+        user.getRoles().clear();
 
         Set<String> roles = Arrays.stream(Role.values())
                 .map(Role::name)
@@ -71,6 +67,7 @@ public class UserService implements UserDetailsService {
                 user.getRoles().add(Role.valueOf(key));
             }
         }
+
         saveUser(user);
     }
 }

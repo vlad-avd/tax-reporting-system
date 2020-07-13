@@ -3,7 +3,6 @@ package ua.kpi.iasa.taxreportingsystem.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -13,13 +12,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.kpi.iasa.taxreportingsystem.domain.Report;
 import ua.kpi.iasa.taxreportingsystem.domain.User;
+import ua.kpi.iasa.taxreportingsystem.domain.enums.PersonType;
 import ua.kpi.iasa.taxreportingsystem.dto.ReportValidationResultDto;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchReportException;
 import ua.kpi.iasa.taxreportingsystem.exception.NoSuchUserException;
 import ua.kpi.iasa.taxreportingsystem.service.ArchiveService;
 import ua.kpi.iasa.taxreportingsystem.service.ReportService;
 import ua.kpi.iasa.taxreportingsystem.util.ArchiveReportConverter;
+import ua.kpi.iasa.taxreportingsystem.util.ReportValidator;
+import ua.kpi.iasa.taxreportingsystem.util.UserValidator;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -78,7 +81,9 @@ public class ReportController {
      * @return Name of the file representing the list of reports.
      */
     @GetMapping()
-    public String getReports(@AuthenticationPrincipal User user, Model model, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
+    public String getReports(@AuthenticationPrincipal User user,
+                             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable,
+                             Model model) {
         model.addAttribute("reports", reportService.getUserSubmittedReports(user.getId(), pageable));
         model.addAttribute("url", "/report");
 
@@ -121,8 +126,7 @@ public class ReportController {
     @PostMapping("/individual-person-report")
     public String createIndividualPersonReport(@AuthenticationPrincipal User user,
                                          Report report,
-                                         @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable,
-                                         Model model) throws NoSuchUserException {
+                                         Model model) throws NoSuchUserException, NoSuchReportException {
 
         ReportValidationResultDto validationResult = reportService.createIndividualPersonReport(report, user);
 
@@ -149,8 +153,7 @@ public class ReportController {
     @PostMapping("/legal-entity-report")
     public String createLegalEntityReport(@AuthenticationPrincipal User user,
                                     Report report,
-                                    Model model,
-                                    @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 8) Pageable pageable) throws NoSuchUserException {
+                                    Model model) throws NoSuchUserException, NoSuchReportException {
 
         ReportValidationResultDto validationResult = reportService.createLegalEntityReport(report, user);
 
@@ -174,7 +177,7 @@ public class ReportController {
      * @see Report
      */
     @PostMapping("/replace-inspector/{report}")
-    public String replaceInspector(@PathVariable Report report) throws NoSuchUserException {
+    public String replaceInspector(@PathVariable Report report) throws NoSuchUserException, NoSuchReportException {
         reportService.replaceInspector(report);
 
         return "redirect:/report";
@@ -197,7 +200,26 @@ public class ReportController {
      */
     @PostMapping("/edit/{report}")
     public String editReport(@PathVariable Report report, Report editedReport) {
-        reportService.editReport(report, editedReport);
-        return "redirect:/report";
+        ReportValidator reportValidator = new ReportValidator();
+
+        boolean isFullNameValid;
+        boolean isWorkplaceValid;
+        boolean isSalaryValid;
+        if(report.getPersonType().equals(PersonType.INDIVIDUAL)) {
+            isFullNameValid = reportValidator.isFullNameValid(editedReport.getFullName());
+            isWorkplaceValid = reportValidator.isWorkplaceValid(editedReport.getWorkplace());
+            isSalaryValid = reportValidator.isSalaryValid(editedReport.getSalary().toString());
+        } else {
+            isFullNameValid = true;
+            isWorkplaceValid = reportValidator.isWorkplaceValid(editedReport.getCompanyName());
+            isSalaryValid = reportValidator.isSalaryValid(editedReport.getFinancialTurnover().toString());
+        }
+
+        if(isFullNameValid && isWorkplaceValid && isSalaryValid) {
+            reportService.editReport(report, editedReport);
+            return "redirect:/report";
+        } else {
+            return "incorrect-data";
+        }
     }
 }
